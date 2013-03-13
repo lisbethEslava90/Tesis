@@ -1,0 +1,8 @@
+SEL nombre_sucursal = "navacerrada" (prestamo)
+SEL importe>1200 (prestamo)
+SEL nombre_sucursal = "navacerrada" , importe >1200 (prestamo)
+PRO numero_prestamo,importe(prestamo)
+PRO nombre_cliente(prestatario) UNI PRO nombre_director(impostor)
+PRO nombre_cliente(impostor) DIF PRO nombre_cliente(prestatario)
+prestatario PROC prestamo
+PRO nombre_cliente(prestatario) INT PRO nombre_director(impostor)

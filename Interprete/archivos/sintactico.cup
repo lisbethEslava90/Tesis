@@ -1,0 +1,118 @@
+package Interprete;
+
+import java_cup.runtime.*;
+
+parser code {:
+
+/***********
+SymbolFactory es una nueva caracteristica que ha sido añadida a las version 11a de cup, la cual facilita la implementacion de clases Symbol personalizadas
+, esto debido a que dicha clase no provee mucha información de contexto que podria ser util para el analisis semantico o ayudar en la construccion del AST
+Mas informacion en: http//4thmouse.com/index.php/2007/02/15/using-custom-symbols-in-cup/
+***********/
+	public static void main(String args[]) throws Exception {
+		//TinySymbolFactory sf = new TinySymbolFactory();
+		SymbolFactory sf = new DefaultSymbolFactory();
+		if (args.length==0) 
+			new parser(new Scanner(System.in,sf),sf).parse();
+		else 
+			new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf).parse();
+	}
+
+:}
+
+action code {:
+
+			private boolean debug = true;
+			
+			:}
+			
+/* Simbolos Terminales */
+
+terminal SEL;
+terminal PRO;
+terminal UNI;
+terminal DIF;
+terminal PROC;
+terminal INT;
+terminal DIV;
+terminal REUN;
+terminal EQ;
+terminal DIFERENTE;
+terminal MAYOR;
+terminal MAYOREQ;
+terminal MENOR;
+terminal MENOREQ;
+terminal IPAREN;
+terminal DPAREN;
+terminal COMA;
+terminal COMI;
+terminal PUNTO;
+terminal NUEVA;
+terminal Integer NUM;
+terminal String ID;
+
+/* Simbolos No Terminales */
+
+non terminal programa;
+non terminal seq_consultas;
+non terminal consulta;
+non terminal relacion;
+non terminal relacion_simple;
+non terminal relacion_compleja;
+non terminal restriccion;
+non terminal seq_restricciones;
+non terminal columna;
+non terminal nombre_tabla;
+non terminal palabra;
+
+/* REGLAS GRAMATICALES */
+
+programa			::= seq_consultas
+			;
+
+seq_consultas		::= seq_consultas:con NUEVA consulta:otraCon
+					| consulta:consulta	
+			;
+			
+consulta    		::= relacion:consulta
+			;
+
+relacion			::= relacion_simple:relacion 	
+					| relacion_compleja:relCompuesta	
+			;
+			
+relacion_compleja 	::= relacion_simple:condicionI UNI relacion_simple:condicionD
+					| relacion_simple:condicionI INT relacion_simple:condicionD
+					| relacion_simple:condicionI DIV relacion_simple:condicionD
+					| relacion_simple:condicionI DIF relacion_simple:condicionD
+					| relacion_simple:condicionI PROC relacion_simple:condicionD
+					| relacion_simple:condicionI REUN relacion_simple:condicionD
+			;
+		
+relacion_simple 	::= PRO seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
+					| SEL seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
+					//| PRO seq_restricciones:restr IPAREN relacion_simple:subconsulta DPAREN
+					| nombre_tabla:tabla
+	        ;
+		
+seq_restricciones	::= seq_restricciones:condiciones COMA restriccion:restriccion		
+					| restriccion:restr
+			;
+
+restriccion			::= columna:campo	
+					| columna:campo EQ columna:condicion
+					| columna:campo DIFERENTE columna:condicion
+					| columna:campo MENOR columna:condicion
+					| columna:campo MENOREQ columna:condicion
+					| columna:campo MAYOR columna:condicion
+					| columna:campo MAYOREQ columna:condicion
+			;
+			
+columna				::= ID:palabra
+					| COMI ID:palabra COMI
+					| NUM:numero
+			;
+			
+			
+nombre_tabla		::= ID:tabla
+			;
