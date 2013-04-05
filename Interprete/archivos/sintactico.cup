@@ -59,11 +59,11 @@ non terminal consulta;
 non terminal relacion;
 non terminal relacion_simple;
 non terminal relacion_compleja;
+non terminal sub_relacion;
 non terminal restriccion;
 non terminal seq_restricciones;
 non terminal columna;
 non terminal nombre_tabla;
-non terminal palabra;
 
 /* REGLAS GRAMATICALES */
 
@@ -78,7 +78,7 @@ consulta    		::= relacion:consulta
 			;
 
 relacion			::= relacion_simple:relacion 	
-					| relacion_compleja:relCompuesta	
+					| relacion_compleja:relCompleja
 			;
 			
 relacion_compleja 	::= relacion_simple:condicionI UNI relacion_simple:condicionD
@@ -89,10 +89,14 @@ relacion_compleja 	::= relacion_simple:condicionI UNI relacion_simple:condicionD
 					| relacion_simple:condicionI REUN relacion_simple:condicionD
 			;
 		
-relacion_simple 	::= PRO seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
-					| SEL seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
-					//| PRO seq_restricciones:restr IPAREN relacion_simple:subconsulta DPAREN
+relacion_simple 	::= PRO seq_restricciones:restr IPAREN sub_relacion:subRela DPAREN
+					| SEL seq_restricciones:restr IPAREN sub_relacion:subRela DPAREN
+					| sub_relacion:relacion
 					| nombre_tabla:tabla
+	        ;
+			n
+sub_relacion	 	::= PRO seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
+					| SEL seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
 	        ;
 		
 seq_restricciones	::= seq_restricciones:condiciones COMA restriccion:restriccion		
@@ -112,7 +116,6 @@ columna				::= ID:palabra
 					| COMI ID:palabra COMI
 					| NUM:numero
 			;
-			
 			
 nombre_tabla		::= ID:tabla
 			;
