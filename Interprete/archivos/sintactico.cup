@@ -36,6 +36,9 @@ terminal PROC;
 terminal INT;
 terminal DIV;
 terminal REUN;
+terminal AND;
+terminal NOT;
+terminal OR;
 terminal EQ;
 terminal DIFERENTE;
 terminal MAYOR;
@@ -47,6 +50,7 @@ terminal DPAREN;
 terminal COMA;
 terminal COMI;
 terminal PUNTO;
+terminal FECHA;
 terminal NUEVA;
 terminal Integer NUM;
 terminal String ID;
@@ -55,67 +59,61 @@ terminal String ID;
 
 non terminal programa;
 non terminal seq_consultas;
-non terminal consulta;
-non terminal relacion;
-non terminal relacion_simple;
-non terminal relacion_compleja;
-non terminal sub_relacion;
+non terminal expresion;
+non terminal predicado;
 non terminal restriccion;
-non terminal seq_restricciones;
-non terminal columna;
-non terminal nombre_tabla;
+non terminal nombre;
+
+precedence left UNI, DIF,DIV;
+precedence left INT;
+precedence left PROC, REUN;
+precedence right SEL, PRO;
+precedence left AND, OR, NOT;
+
 
 /* REGLAS GRAMATICALES */
 
 programa			::= seq_consultas
 			;
 
-seq_consultas		::= seq_consultas:con NUEVA consulta:otraCon
-					| consulta:consulta	
+seq_consultas		::= seq_consultas:con NUEVA expresion:otraCon
+					| expresion:consulta	
 			;
 			
-consulta    		::= relacion:consulta
-			;
-
-relacion			::= relacion_simple:relacion 	
-					| relacion_compleja:relCompleja
+expresion		 	::= nombre:tabla
+					| expresion:condicionI UNI expresion:condicionD
+					| expresion:condicionI INT expresion:condicionD
+					| expresion:condicionI DIV expresion:condicionD
+					| expresion:condicionI DIF expresion:condicionD
+					| expresion:condicionI PROC expresion:condicionD
+					| expresion:condicionI REUN expresion:condicionD
+					| SEL predicado:restricciones IPAREN expresion:exp DPAREN 
+					| PRO predicado:lista IPAREN expresion:exp DPAREN
 			;
 			
-relacion_compleja 	::= relacion_simple:condicionI UNI relacion_simple:condicionD
-					| relacion_simple:condicionI INT relacion_simple:condicionD
-					| relacion_simple:condicionI DIV relacion_simple:condicionD
-					| relacion_simple:condicionI DIF relacion_simple:condicionD
-					| relacion_simple:condicionI PROC relacion_simple:condicionD
-					| relacion_simple:condicionI REUN relacion_simple:condicionD
-			;
-		
-relacion_simple 	::= PRO seq_restricciones:restr IPAREN sub_relacion:subRela DPAREN
-					| SEL seq_restricciones:restr IPAREN sub_relacion:subRela DPAREN
-					| sub_relacion:relacion
-					| nombre_tabla:tabla
-	        ;
-			n
-sub_relacion	 	::= PRO seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
-					| SEL seq_restricciones:restr IPAREN nombre_tabla:nom DPAREN
-	        ;
-		
-seq_restricciones	::= seq_restricciones:condiciones COMA restriccion:restriccion		
+predicado			::= predicado:condiciones COMA restriccion:restriccion		
+					| IPAREN restriccion:condiciones DPAREN AND predicado:restricciones
+					| IPAREN restriccion:condiciones DPAREN OR predicado:restricciones
+					| IPAREN restriccion:condiciones DPAREN NOT predicado:restricciones
+					| IPAREN restriccion:condiciones DPAREN 
 					| restriccion:restr
 			;
 
-restriccion			::= columna:campo	
-					| columna:campo EQ columna:condicion
-					| columna:campo DIFERENTE columna:condicion
-					| columna:campo MENOR columna:condicion
-					| columna:campo MENOREQ columna:condicion
-					| columna:campo MAYOR columna:condicion
-					| columna:campo MAYOREQ columna:condicion
+restriccion			::= nombre:campo	
+					| nombre:campo EQ nombre:condicion
+					| nombre:campo DIFERENTE nombre:condicion
+					| nombre:campo MENOR nombre:condicion
+					| nombre:campo MENOREQ nombre:condicion
+					| nombre:campo MAYOR nombre:condicion
+					| nombre:campo MAYOREQ nombre:condicion
+					| restriccion:resI AND restriccion:resD
+					| restriccion:resI OR restriccion:resD
+					| restriccion:resI NOT restriccion:resD
 			;
 			
-columna				::= ID:palabra
+nombre				::= ID:palabra
 					| COMI ID:palabra COMI
+					| ID:tabla PUNTO ID:columna
 					| NUM:numero
-			;
-			
-nombre_tabla		::= ID:tabla
+					| FECHA:fecha
 			;

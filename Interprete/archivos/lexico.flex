@@ -22,10 +22,11 @@ import java_cup.runtime.SymbolFactory;
     return sf.newSymbol("EOF",sym.EOF);
 %eofval}
 
-digito		= [0-9]
-numero		= {digito}+("."{digito}+)?
+digito			= [0-9]
+numero			= {digito}+("."{digito}+)?
+fecha			= {digito}+("/"){digito}+("/"){digito}+	
 letra			= [a-zA-Z]
-identificador	= {letra}([a-zA-Z0-9.%$_])*
+identificador	= {letra}([a-zA-Z0-9%$_])*
 nuevalinea		= \n | \n\r | \r\n
 espacio		= [ \t]+
 
@@ -54,6 +55,15 @@ espacio		= [ \t]+
 "REUN"          { if(debug)System.out.println("token REUN");
 			return sf.newSymbol("REUN",sym.REUN);
 			}
+"AND"             { if(debug) System.out.println("token AND");
+			return sf.newSymbol("AND",sym.AND);
+			}						
+"NOT"             { if(debug) System.out.println("token NOT");
+			return sf.newSymbol("NOT",sym.NOT);
+			}						
+"OR"             { if(debug) System.out.println("token OR");
+			return sf.newSymbol("OR",sym.OR);
+			}						
 "="             { if(debug) System.out.println("token EQ");
 			return sf.newSymbol("EQ",sym.EQ);
 			}	
@@ -86,13 +96,16 @@ espacio		= [ \t]+
 			}
 "."             {	if(debug) System.out.println("token PUNTO");
 			return sf.newSymbol("PUNTO",sym.PUNTO);
-			}
+			}		
 {numero}        {	if(debug) System.out.println("token NUM");
 			return sf.newSymbol("NUM",sym.NUM,new Integer(yytext()));
 			}
 {identificador}	{	if(debug) System.out.println("token ID");
 				return sf.newSymbol("ID",sym.ID,new String(yytext()));
 			}
+{fecha}			{	if(debug) System.out.println("token FECHA");
+				return sf.newSymbol("FECHA",sym.FECHA,new String(yytext()));
+			}	
 {nuevalinea}	{	if(debug) System.out.println(" ");
 			return sf.newSymbol("NUEVA", sym.NUEVA);
 			}			
