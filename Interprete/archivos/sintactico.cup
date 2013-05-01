@@ -45,11 +45,14 @@ terminal MAYOR;
 terminal MAYOREQ;
 terminal MENOR;
 terminal MENOREQ;
+terminal SUMA;
+terminal RESTA;
+terminal MULTI;
+terminal DIVI;
 terminal IPAREN;
 terminal DPAREN;
 terminal COMA;
 terminal COMI;
-terminal PUNTO;
 terminal FECHA;
 terminal NUEVA;
 terminal Integer NUM;
@@ -63,13 +66,14 @@ non terminal expresion;
 non terminal predicado;
 non terminal restriccion;
 non terminal nombre;
+non terminal operacion;
 
-precedence left UNI, DIF,DIV;
-precedence left INT;
-precedence left PROC, REUN;
-precedence right SEL, PRO;
+precedence left SEL, PRO;
+precedence left PROC, REUN, INT, UNI, DIF, DIV;
 precedence left AND, OR, NOT;
-
+precedence left IPAREN, DPAREN;
+precedence left SUMA, RESTA;
+precedence left MULTI, DIVI;
 
 /* REGLAS GRAMATICALES */
 
@@ -80,7 +84,7 @@ seq_consultas		::= seq_consultas:con NUEVA expresion:otraCon
 					| expresion:consulta	
 			;
 			
-expresion		 	::= nombre:tabla
+expresion		 	::= nombre:relacion
 					| expresion:condicionI UNI expresion:condicionD
 					| expresion:condicionI INT expresion:condicionD
 					| expresion:condicionI DIV expresion:condicionD
@@ -92,7 +96,7 @@ expresion		 	::= nombre:tabla
 			;
 			
 predicado			::= predicado:condiciones COMA restriccion:restriccion		
-					| IPAREN restriccion:condiciones DPAREN AND predicado:restricciones
+					| IPAREN restriccion:condiciones DPAREN AND predicado:restricciones 
 					| IPAREN restriccion:condiciones DPAREN OR predicado:restricciones
 					| IPAREN restriccion:condiciones DPAREN NOT predicado:restricciones
 					| IPAREN restriccion:condiciones DPAREN 
@@ -108,12 +112,19 @@ restriccion			::= nombre:campo
 					| nombre:campo MAYOREQ nombre:condicion
 					| restriccion:resI AND restriccion:resD
 					| restriccion:resI OR restriccion:resD
-					| restriccion:resI NOT restriccion:resD
+					| restriccion:resI NOT restriccion:resD 
+					| IPAREN nombre:operacion DPAREN
 			;
 			
-nombre				::= ID:palabra
+nombre				::= ID:palabra 
 					| COMI ID:palabra COMI
-					| ID:tabla PUNTO ID:columna
 					| NUM:numero
 					| FECHA:fecha
+					| ID:palabra ID:sinonimo
+					| nombre:opeI operacion:operador nombre:opeD
+			;			
+operacion			::= SUMA:suma
+					| RESTA:resta
+					| MULTI:multiplica
+					| DIVI:divide
 			;

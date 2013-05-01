@@ -26,7 +26,7 @@ digito			= [0-9]
 numero			= {digito}+("."{digito}+)?
 fecha			= {digito}+("/"){digito}+("/"){digito}+	
 letra			= [a-zA-Z]
-identificador	= {letra}([a-zA-Z0-9%$_])*
+identificador	= {letra}([a-zA-Z0-9.%$_])*
 nuevalinea		= \n | \n\r | \r\n
 espacio		= [ \t]+
 
@@ -94,9 +94,18 @@ espacio		= [ \t]+
 "\""			{	if(debug) System.out.println("token COMILLAS");
 				return sf.newSymbol("COMI",sym.COMI);
 			}
-"."             {	if(debug) System.out.println("token PUNTO");
-			return sf.newSymbol("PUNTO",sym.PUNTO);
-			}		
+"+"			{	if(debug) System.out.println("token SUMA");
+				return sf.newSymbol("SUMA",sym.SUMA);
+			}			
+"-"			{	if(debug) System.out.println("token RESTA");
+				return sf.newSymbol("RESTA",sym.RESTA);
+			}			
+"*"			{	if(debug) System.out.println("token MULTIPLICACION");
+				return sf.newSymbol("MULTI",sym.MULTI);
+			}			
+"/"			{	if(debug) System.out.println("token DIVISION");
+				return sf.newSymbol("DIVI",sym.DIVI);
+			}			
 {numero}        {	if(debug) System.out.println("token NUM");
 			return sf.newSymbol("NUM",sym.NUM,new Integer(yytext()));
 			}
