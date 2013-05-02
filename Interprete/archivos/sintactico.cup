@@ -1,6 +1,7 @@
 package Interprete;
 
 import java_cup.runtime.*;
+import nodos.*;
 
 parser code {:
 
@@ -16,6 +17,8 @@ Mas informacion en: http//4thmouse.com/index.php/2007/02/15/using-custom-symbols
 			new parser(new Scanner(System.in,sf),sf).parse();
 		else 
 			new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf).parse();
+			
+
 	}
 
 :}
@@ -23,6 +26,11 @@ Mas informacion en: http//4thmouse.com/index.php/2007/02/15/using-custom-symbols
 action code {:
 
 			private boolean debug = true;
+			private NodoBase raiz=null;
+			
+			public NodoBase getRaiz(){
+				return raiz;
+			}
 			
 			:}
 			
@@ -54,19 +62,16 @@ terminal DPAREN;
 terminal COMA;
 terminal COMI;
 terminal FECHA;
-terminal NUEVA;
 terminal Integer NUM;
 terminal String ID;
 
 /* Simbolos No Terminales */
 
-non terminal programa;
-non terminal seq_consultas;
-non terminal expresion;
-non terminal predicado;
-non terminal restriccion;
-non terminal nombre;
-non terminal operacion;
+non terminal NodoBase expresion;
+non terminal NodoBase predicado;
+non terminal NodoBase restriccion;
+non terminal NodoBase nombre;
+non terminal NodoBase relacion;
 
 precedence left SEL, PRO;
 precedence left PROC, REUN, INT, UNI, DIF, DIV;
@@ -77,54 +82,155 @@ precedence left MULTI, DIVI;
 
 /* REGLAS GRAMATICALES */
 
-programa			::= seq_consultas
+expresion		 	::= relacion:relacion{:
+							
+					:}
+					| expresion:condicionI UNI expresion:condicionD{:
+						if(raiz==null){
+							raiz= new NodoOperacion(sym.UNI,condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion(sym.UNI,condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI INT expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion(sym.INT,condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion(sym.INT,condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI DIV expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion(sym.DIV,condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion(sym.DIV,condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI DIF expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion(sym.DIF,condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion(sym.DIF,condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI PROC expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion(sym.PROC,condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion(sym.PROC,condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI REUN expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion(sym.REUN,condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion(sym.REUN,condicionI,condicionD));
+						}
+					:}
+					| SEL predicado:restricciones IPAREN expresion:exp DPAREN {:
+						if(raiz==null){
+								raiz = new NodoExpresion(sym.SEL,restricciones,exp);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano()) 
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoExpresion(sym.SEL,restricciones,exp));
+						}
+					:}
+					| PRO predicado:restricciones IPAREN expresion:exp DPAREN {:
+						if(raiz==null){
+							raiz = new NodoExpresion(sym.PRO,restricciones,exp);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano()) 
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoExpresion(sym.PRO,restricciones,exp));
+						}
+					:}
 			;
+			
+predicado			::= predicado:condiciones COMA restriccion:restriccion {:
 
-seq_consultas		::= seq_consultas:con NUEVA expresion:otraCon
-					| expresion:consulta	
-			;
-			
-expresion		 	::= nombre:relacion
-					| expresion:condicionI UNI expresion:condicionD
-					| expresion:condicionI INT expresion:condicionD
-					| expresion:condicionI DIV expresion:condicionD
-					| expresion:condicionI DIF expresion:condicionD
-					| expresion:condicionI PROC expresion:condicionD
-					| expresion:condicionI REUN expresion:condicionD
-					| SEL predicado:restricciones IPAREN expresion:exp DPAREN 
-					| PRO predicado:lista IPAREN expresion:exp DPAREN
-			;
-			
-predicado			::= predicado:condiciones COMA restriccion:restriccion		
+					:}	
 					| IPAREN restriccion:condiciones DPAREN AND predicado:restricciones 
 					| IPAREN restriccion:condiciones DPAREN OR predicado:restricciones
 					| IPAREN restriccion:condiciones DPAREN NOT predicado:restricciones
 					| IPAREN restriccion:condiciones DPAREN 
-					| restriccion:restr
+					| restriccion:restriccion 
 			;
 
-restriccion			::= nombre:campo	
-					| nombre:campo EQ nombre:condicion
-					| nombre:campo DIFERENTE nombre:condicion
-					| nombre:campo MENOR nombre:condicion
-					| nombre:campo MENOREQ nombre:condicion
-					| nombre:campo MAYOR nombre:condicion
-					| nombre:campo MAYOREQ nombre:condicion
-					| restriccion:resI AND restriccion:resD
+restriccion			::= nombre:campo{:
+						
+					:}
+					| nombre:campo EQ nombre:condicion{:
+						/*RESULT = new NodoComparacion(campo,tipoOp.igual,condicion);*/
+					:}
+					| nombre:campo DIFERENTE nombre:condicion {:
+						
+					:}
+					| nombre:campo MENOR nombre:condicion {:
+						
+					:}
+					| nombre:campo MENOREQ nombre:condicion {:
+						
+					:}
+					| nombre:campo MAYOR nombre:condicion {:
+						
+					:}
+					| nombre:campo MAYOREQ nombre:condicion {:
+						
+					:}
+					| restriccion:resI AND restriccion:resD 
 					| restriccion:resI OR restriccion:resD
 					| restriccion:resI NOT restriccion:resD 
 					| IPAREN nombre:operacion DPAREN
 			;
-			
-nombre				::= ID:palabra 
-					| COMI ID:palabra COMI
-					| NUM:numero
-					| FECHA:fecha
+relacion			::= ID:palabra {:
+						
+					:}
 					| ID:palabra ID:sinonimo
-					| nombre:opeI operacion:operador nombre:opeD
-			;			
-operacion			::= SUMA:suma
-					| RESTA:resta
-					| MULTI:multiplica
-					| DIVI:divide
 			;
+			
+nombre				::= ID:palabra {:
+						
+					:}
+					| COMI ID:palabra COMI {:
+						
+					:}
+					| NUM:numero {:
+						
+					:}
+					| FECHA:fecha {:
+						
+					:}
+					| nombre:opeI SUMA nombre:opeD {:
+						/*RESULT = new NodoComparacion(opeI,tipoOp.suma,opeD);*/
+					:}
+					| nombre:opeI RESTA nombre:opeD {:
+						
+					:}
+					| nombre:opeI MULTI nombre:opeD {:
+						
+					:}
+					| nombre:opeI DIVI nombre:opeD {:
+						
+					:}
+			;			

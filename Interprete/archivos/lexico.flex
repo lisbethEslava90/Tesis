@@ -28,7 +28,7 @@ fecha			= {digito}+("/"){digito}+("/"){digito}+
 letra			= [a-zA-Z]
 identificador	= {letra}([a-zA-Z0-9.%$_])*
 nuevalinea		= \n | \n\r | \r\n
-espacio		= [ \t]+
+espacio			= [ \t]+
 
 %%
 "SEL"           { if(debug) System.out.println("token SEL");
@@ -115,7 +115,7 @@ espacio		= [ \t]+
 {fecha}			{	if(debug) System.out.println("token FECHA");
 				return sf.newSymbol("FECHA",sym.FECHA,new String(yytext()));
 			}	
-{nuevalinea}	{	if(debug) System.out.println(" ");
-			return sf.newSymbol("NUEVA", sym.NUEVA);
+{nuevalinea}	{	/*if(debug) System.out.println(" ");
+			return sf.newSymbol("NUEVA", sym.NUEVA);*/
 			}			
 {espacio}    	{ /* saltos espacios en blanco*/}
