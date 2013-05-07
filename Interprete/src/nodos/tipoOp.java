@@ -11,5 +11,6 @@ package nodos;
  */
 public enum tipoOp {
     igual, diferente, menor, menorIgual, mayor, mayorIgual,
-    suma, resta, multi, divi
+    suma, resta, multi, divi,
+    and, or, not
 }

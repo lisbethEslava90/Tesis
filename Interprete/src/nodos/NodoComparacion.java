@@ -15,7 +15,7 @@ public class NodoComparacion extends NodoBase{
     private NodoBase opDerecho;
     private tipoOp operacion;
 
-    public NodoComparacion(NodoBase opIzquierdo, NodoBase opDerecho, tipoOp operacion) {
+    public NodoComparacion(NodoBase opIzquierdo, tipoOp operacion, NodoBase opDerecho) {
         this.opIzquierdo = opIzquierdo;
         this.opDerecho = opDerecho;
         this.operacion = operacion;

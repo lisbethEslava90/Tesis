@@ -1,1 +1,1 @@
-SEL nombre_sucursal = "navacerrada" (prestamo)
+PRO nombre_cliente(SEL ciudad_cliente="Peguerinos" (cliente) )

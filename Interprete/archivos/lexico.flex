@@ -1,4 +1,4 @@
-package Interprete;
+package interprete;
 
 import java_cup.runtime.SymbolFactory;
 
