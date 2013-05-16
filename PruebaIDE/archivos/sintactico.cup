@@ -1,0 +1,246 @@
+package interprete;
+
+import java_cup.runtime.*;
+import nodos.*;
+
+action code {:
+
+			private boolean debug = true;
+			private NodoBase raiz=null;
+			
+			public NodoBase getRaiz(){
+				return raiz;
+			}
+			
+			:}
+			
+/* Simbolos Terminales */
+
+terminal SEL;
+terminal PRO;
+terminal UNI;
+terminal DIF;
+terminal PROC;
+terminal INT;
+terminal DIV;
+terminal REUN;
+terminal AND;
+terminal NOT;
+terminal OR;
+terminal EQ;
+terminal DIFERENTE;
+terminal MAYOR;
+terminal MAYOREQ;
+terminal MENOR;
+terminal MENOREQ;
+terminal SUMA;
+terminal RESTA;
+terminal MULTI;
+terminal DIVI;
+terminal IPAREN;
+terminal DPAREN;
+terminal COMA;
+terminal COMI;
+terminal FECHA;
+terminal Integer NUM;
+terminal String ID;
+
+/* Simbolos No Terminales */
+
+non terminal NodoBase expresion;
+non terminal NodoBase predicado;
+non terminal NodoBase restriccion;
+non terminal NodoBase nombre;
+non terminal NodoBase relacion;
+
+precedence left SEL, PRO;
+precedence left PROC, REUN, INT, UNI, DIF, DIV;
+precedence left AND, OR, NOT;
+precedence left IPAREN, DPAREN;
+precedence left SUMA, RESTA;
+precedence left MULTI, DIVI;
+
+/* REGLAS GRAMATICALES */
+
+expresion		 	::= relacion:rel{:
+						RESULT = rel;
+					:}
+					
+					| expresion:condicionI UNI expresion:condicionD{:
+						if(raiz==null){
+							raiz= new NodoOperacion("UNI",condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion("UNI",condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI INT expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion("INT",condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion("INT",condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI DIV expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion("DIV",condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion("DIV",condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI DIF expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion("DIF",condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion("DIF",condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI PROC expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion("PROC",condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion("PROC",condicionI,condicionD));
+						}
+					:}
+					| expresion:condicionI REUN expresion:condicionD {:
+						if(raiz==null){
+							raiz = new NodoOperacion("REUN",condicionI,condicionD);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano())
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoOperacion("REUN",condicionI,condicionD));
+						}
+					:}
+					| SEL predicado:restricciones IPAREN expresion:exp DPAREN {:
+						if(raiz==null){
+								raiz = new NodoExpresion("SEL",restricciones,exp);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano()) 
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoExpresion("SEL",restricciones,exp));
+						}
+					:}
+					| PRO predicado:restricciones IPAREN expresion:exp DPAREN {:
+						if(raiz==null){
+							raiz = new NodoExpresion("PRO",restricciones,exp);
+						}else{
+							NodoBase aux = raiz;
+							while(aux.tieneHermano()) 
+								aux = aux.getHermanoDerecha();
+							aux.setHermanoDerecha(new NodoExpresion("PRO",restricciones,exp));
+						}
+					:}
+			;
+			
+predicado			::= predicado:conI COMA restriccion:conD {:
+						NodoBase hijoActual = conI;
+						if(hijoActual !=null){
+							while(hijoActual.tieneHermano()){
+								hijoActual = hijoActual.getHermanoDerecha();
+							}
+							hijoActual.setHermanoDerecha(conD);
+							RESULT=conI;
+						}else{
+							RESULT=conD;
+						}
+					:}	
+					| IPAREN restriccion:conI DPAREN AND predicado:conD {:
+						RESULT = new NodoOperadorLogico(tipoOp.and, conI, conD);
+					:}
+					| IPAREN restriccion:conI DPAREN OR predicado:conD {:
+						RESULT = new NodoOperadorLogico(tipoOp.or, conI, conD);
+					:}
+					| IPAREN restriccion:conI DPAREN NOT predicado:conD {:
+						RESULT = new NodoOperadorLogico(tipoOp.not, conI, conD);
+					:}
+					| IPAREN restriccion:cond DPAREN {:
+						RESULT = cond;
+					:}
+					| restriccion:restri {: 
+						RESULT = restri;
+					:}
+			;
+
+restriccion			::= nombre:campo{:
+						RESULT = campo;
+					:}
+					| nombre:campo EQ nombre:condicion{:
+						RESULT = new NodoComparacion(campo,tipoOp.igual,condicion);
+					:}
+					| nombre:campo DIFERENTE nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.diferente,condicion);
+					:}
+					| nombre:campo MENOR nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.menor,condicion);
+					:}
+					| nombre:campo MENOREQ nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.menorIgual,condicion);
+					:}
+					| nombre:campo MAYOR nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.mayor,condicion);
+					:}
+					| nombre:campo MAYOREQ nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.mayorIgual,condicion);
+					:}
+					| restriccion:resI AND restriccion:resD {:
+						RESULT = new NodoOperadorLogico(tipoOp.and, resI, resD);
+					:}
+					| restriccion:resI OR restriccion:resD {:
+						RESULT = new NodoOperadorLogico(tipoOp.or, resI, resD);
+					:}
+					| restriccion:resI NOT restriccion:resD {:
+						RESULT = new NodoOperadorLogico(tipoOp.not, resI, resD);
+					:}
+					| IPAREN nombre:operacion DPAREN {:
+						RESULT = operacion;
+					:}
+			;
+relacion			::= ID:palabra {:
+						RESULT = new NodoId(palabra.toString());
+					:}
+					| ID:palabra ID:sinonimo {:
+						RESULT = new NodoId(palabra.toString(), sinonimo.toString());
+					:}
+			;
+			
+nombre				::= ID:palabra {:
+						RESULT = new NodoId(palabra.toString());
+					:}
+					| COMI ID:palabra COMI {:
+						RESULT = new NodoId(palabra.toString());
+					:}
+					| NUM:numero {:
+						RESULT = new NodoNumero(numero);
+					:}
+					| FECHA:fecha {:
+						RESULT = new NodoFecha(fecha.toString());
+					:}
+					| nombre:opeI SUMA nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.suma,opeD);
+					:}
+					| nombre:opeI RESTA nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.resta,opeD);
+					:}
+					| nombre:opeI MULTI nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.multi,opeD);
+					:}
+					| nombre:opeI DIVI nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.divi,opeD);
+					:}
+			;			

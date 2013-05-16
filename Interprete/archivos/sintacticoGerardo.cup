@@ -1,0 +1,209 @@
+package interprete;
+
+import java_cup.runtime.*;
+import nodos.*;
+
+parser code {:
+
+/***********
+SymbolFactory es una nueva caracteristica que ha sido añadida a las version 11a de cup, la cual facilita la implementacion de clases Symbol personalizadas
+, esto debido a que dicha clase no provee mucha información de contexto que podria ser util para el analisis semantico o ayudar en la construccion del AST
+Mas informacion en: http//4thmouse.com/index.php/2007/02/15/using-custom-symbols-in-cup/
+***********/
+	public static void main(String args[]) throws Exception {
+		//TinySymbolFactory sf = new TinySymbolFactory();
+		SymbolFactory sf = new DefaultSymbolFactory();
+		/*if (args.length==0) 
+			new parser(new Scanner(System.in,sf),sf).parse();
+		else 
+			new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf).parse();
+		*/	
+		
+		parser parser_obj = new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf);
+		parser_obj.parse();
+		
+		NodoBase raiz =  parser_obj.action_obj.getRaiz();
+		Util.imprimirArbol(raiz); 
+
+	}
+
+:}
+
+action code {:
+
+			private boolean debug = true;
+			private NodoBase raiz=null;
+			
+			public NodoBase getRaiz(){
+				return raiz;
+			}
+			
+			:}
+			
+/* Simbolos Terminales */
+
+terminal SEL;
+terminal PRO;
+terminal UNI;
+terminal DIF;
+terminal PROC;
+terminal INT;
+terminal DIV;
+terminal REUN;
+terminal AND;
+terminal NOT;
+terminal OR;
+terminal EQ;
+terminal DIFERENTE;
+terminal MAYOR;
+terminal MAYOREQ;
+terminal MENOR;
+terminal MENOREQ;
+terminal SUMA;
+terminal RESTA;
+terminal MULTI;
+terminal DIVI;
+terminal IPAREN;
+terminal DPAREN;
+terminal COMA;
+terminal COMI;
+terminal FECHA;
+terminal Integer NUM;
+terminal String ID;
+
+/* Simbolos No Terminales */
+
+non terminal NodoBase exp;
+non terminal NodoBase exp_simple;
+non terminal NodoBase predicado;
+non terminal NodoBase restriccion;
+non terminal NodoBase nombre;
+non terminal NodoBase relacion;
+non terminal NodoBase identificador;
+
+precedence left SEL, PRO;
+precedence left PROC, REUN, INT, UNI, DIF, DIV;
+precedence left AND, OR, NOT;
+precedence left IPAREN, DPAREN;
+precedence left SUMA, RESTA;
+precedence left MULTI, DIVI;
+
+/* REGLAS GRAMATICALES */
+
+exp		 	::= exp_simple:expresion 
+				| exp:expresionI UNI exp_simple:expresionD 
+				| exp:expresionI INT exp_simple:expresionD 
+				| exp:expresionI PROC exp_simple:expresionD 
+				| exp:expresionI DIV exp_simple:expresionD  
+				| exp:expresionI DIF exp_simple:expresionD 
+				| exp:expresionI REUN exp_simple: expresionD 
+				
+			;
+			
+exp_simple 	::= SEL predicado:condiciones IPAREN exp:rela DPAREN {::} 
+				| PRO predicado:lista IPAREN exp:rela DPAREN {::}	
+				| relacion:re
+			;
+							
+			
+predicado			::= predicado:conI COMA restriccion:conD {:
+						NodoBase hijoActual = conI;
+						if(hijoActual !=null){
+							while(hijoActual.tieneHermano()){
+								hijoActual = hijoActual.getHermanoDerecha();
+							}
+							hijoActual.setHermanoDerecha(conD);
+							RESULT=conI;
+						}else{
+							RESULT=conD;
+						}
+					:}	
+					| IPAREN restriccion:conI DPAREN AND predicado:conD {:
+						RESULT = new NodoOperadorLogico(tipoOp.and, conI, conD);
+					:}
+					| IPAREN restriccion:conI DPAREN OR predicado:conD {:
+						RESULT = new NodoOperadorLogico(tipoOp.or, conI, conD);
+					:}
+					| IPAREN restriccion:conI DPAREN NOT predicado:conD {:
+						RESULT = new NodoOperadorLogico(tipoOp.not, conI, conD);
+					:}
+					| IPAREN restriccion:cond DPAREN {:
+						RESULT = cond;
+					:}
+					| restriccion:restri {: 
+						RESULT = restri;
+					:}
+			;
+
+restriccion			::= nombre:campo{:
+						RESULT = campo;
+					:}
+					| nombre:campo EQ nombre:condicion{:
+						RESULT = new NodoComparacion(campo,tipoOp.igual,condicion);
+					:}
+					| nombre:campo DIFERENTE nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.diferente,condicion);
+					:}
+					| nombre:campo MENOR nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.menor,condicion);
+					:}
+					| nombre:campo MENOREQ nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.menorIgual,condicion);
+					:}
+					| nombre:campo MAYOR nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.mayor,condicion);
+					:}
+					| nombre:campo MAYOREQ nombre:condicion {:
+						RESULT = new NodoComparacion(campo,tipoOp.mayorIgual,condicion);
+					:}
+					| restriccion:resI AND restriccion:resD {:
+						RESULT = new NodoOperadorLogico(tipoOp.and, resI, resD);
+					:}
+					| restriccion:resI OR restriccion:resD {:
+						RESULT = new NodoOperadorLogico(tipoOp.or, resI, resD);
+					:}
+					| restriccion:resI NOT restriccion:resD {:
+						RESULT = new NodoOperadorLogico(tipoOp.not, resI, resD);
+					:}
+					| IPAREN nombre:operacion DPAREN {:
+						RESULT = operacion;
+					:}
+			;
+relacion			::= identificador:palabra {:
+						RESULT = palabra;
+					:}
+					| ID:palabra ID:sinonimo {:
+						RESULT = new NodoId(palabra.toString(), sinonimo.toString());
+					:}
+					
+			;
+			
+nombre				::= identificador:palabra {:
+						RESULT = palabra;
+					:}
+					| COMI identificador:palabra COMI {:
+						RESULT = palabra;
+					:}
+					| NUM:numero {:
+						RESULT = new NodoNumero(numero);
+					:}
+					| FECHA:fecha {:
+						RESULT = new NodoFecha(fecha.toString());
+					:}
+					| nombre:opeI SUMA nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.suma,opeD);
+					:}
+					| nombre:opeI RESTA nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.resta,opeD);
+					:}
+					| nombre:opeI MULTI nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.multi,opeD);
+					:}
+					| nombre:opeI DIVI nombre:opeD {:
+						RESULT = new NodoComparacion(opeI,tipoOp.divi,opeD);
+					:}
+			;
+identificador		::= ID:palabra {:
+						RESULT = new NodoId(palabra.toString());
+					:}		
+			;

@@ -11,7 +11,7 @@ package nodos;
  */
 public class NodoId extends NodoBase{
 
-    private String id, sinonimo;
+    private String id, sinonimo=null;
 
     public NodoId(String id) {
         this.id = id;

@@ -1,1 +1,1 @@
-PRO nombre_cliente(SEL ciudad_cliente="Peguerinos" (cliente) )
+PRO sal+300 (saldos)

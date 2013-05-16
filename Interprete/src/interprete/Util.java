@@ -13,29 +13,28 @@ import nodos.*;
 public class Util {
 
     static int sangria = 0;
-
+    static int cont =0;
     public static void imprimirArbol(NodoBase raiz){
-
+       // System.out.println("SANGRIA: "+sangria);
         sangria+=2;
-
         while (raiz != null){
             imprimirEspacios();
 
-            if(raiz instanceof NodoComparacion)
+            if(raiz instanceof NodoComparacion){
                imprimirNodo( (NodoComparacion) raiz);
-            else if(raiz instanceof NodoExpresion)
+            }else if(raiz instanceof NodoExpresion){
                 imprimirNodo((NodoExpresion)raiz);
-            else if(raiz instanceof NodoFecha)
-                System.out.println("Fecha");
-            else if(raiz instanceof NodoId)
+            }else if(raiz instanceof NodoFecha)
+                System.out.println("Fecha: "+((NodoFecha)raiz).getFecha());
+            else if(raiz instanceof NodoId){
                 imprimirNodo((NodoId)raiz);
-            else if(raiz instanceof  NodoNumero)
+            }else if(raiz instanceof  NodoNumero)
                 imprimirNodo((NodoNumero)raiz);
             else if(raiz instanceof NodoOperacion)
                 imprimirNodo((NodoOperacion)raiz);
             else if(raiz instanceof NodoOperadorLogico)
                 imprimirNodo((NodoOperadorLogico)raiz);
-            else System.out.println("Nodo Desconocido");;
+            else System.out.println("Nodo Desconocido");
 
             if(raiz instanceof NodoComparacion){
 
@@ -50,7 +49,7 @@ public class Util {
             else if(raiz instanceof NodoExpresion){
                 imprimirEspacios();
                 System.out.println("**Relacion**");
-                imprimirArbol(((NodoExpresion)raiz).getRelacion());
+                imprimirArbol(((NodoExpresion)raiz).getRelacion()); 
                 imprimirEspacios();
                 System.out.println("**Predicado**");
                 imprimirArbol(((NodoExpresion)raiz).getPredicado());
@@ -73,6 +72,7 @@ public class Util {
                 System.out.println("*exp der opeLogico");
                 imprimirArbol(((NodoOperadorLogico)raiz).getOpeD());
             }
+
             raiz = raiz.getHermanoDerecha();
         }
         sangria-=2;
@@ -85,7 +85,7 @@ public class Util {
     }
 
     public static void imprimirNodo(NodoBase raiz){
-
+        //System.out.println("SANGRIA: "+sangria);
         if(raiz instanceof NodoComparacion){
 
             tipoOp sel = ((NodoComparacion) raiz).getOperacion();
@@ -127,9 +127,11 @@ public class Util {
            if(sel.equals("PRO"))
                 System.out.println("PRO");
         }
-            //como imprimir si es con sinonimo
-        if(raiz instanceof NodoId)
-            System.out.println("ID: "+((NodoId) raiz).getId() );
+            
+        if(raiz instanceof NodoId){
+               String sino = (((NodoId) raiz).getSinonimo()!=null)?((NodoId) raiz).getSinonimo():"";
+               System.out.println("ID:"+((NodoId) raiz).getId()+""+sino);
+        }
 
         if(raiz instanceof  NodoNumero)
             System.out.println("NUM = "+ ((NodoNumero) raiz).getNumero());

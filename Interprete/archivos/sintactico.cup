@@ -23,7 +23,8 @@ Mas informacion en: http//4thmouse.com/index.php/2007/02/15/using-custom-symbols
 		parser_obj.parse();
 		
 		NodoBase raiz =  parser_obj.action_obj.getRaiz();
-		Util.imprimirArbol(raiz); 
+		System.out.println("TIPO RAIZ: "+parser_obj.action_obj.rootType(raiz));
+		//Util.imprimirArbol(raiz); 
 
 	}
 
@@ -36,6 +37,29 @@ action code {:
 			
 			public NodoBase getRaiz(){
 				return raiz;
+			}
+			
+			public String rootType(NodoBase root){
+				String type="";
+				if(root instanceof NodoId)
+					type="NodoId";
+				else if(root instanceof NodoExpresion)
+					type="NodoExpresion";
+				else if(root instanceof NodoComparacion)
+					type="NodoComparacion";
+				else if(root instanceof NodoFecha)
+					type="NodoFecha";
+				else if(root instanceof NodoNumero)
+					type="NodoNumero";
+				else if(root instanceof NodoOperacion)
+					type="NodoOperacion";
+				else if(root instanceof NodoOperadorLogico)
+					type="NodoOperadorLogico";
+				else if(root instanceof NodoBase){
+					type="NodoBase";
+				}else 
+					type="Desconocido";
+				return type;
 			}
 			
 			:}
@@ -73,11 +97,14 @@ terminal String ID;
 
 /* Simbolos No Terminales */
 
-non terminal NodoBase expresion;
+non terminal NodoBase exp;
+non terminal NodoBase exp_simple;
 non terminal NodoBase predicado;
 non terminal NodoBase restriccion;
 non terminal NodoBase nombre;
 non terminal NodoBase relacion;
+non terminal NodoBase identificador;
+non terminal NodoBase program;
 
 precedence left SEL, PRO;
 precedence left PROC, REUN, INT, UNI, DIF, DIV;
@@ -88,91 +115,44 @@ precedence left MULTI, DIVI;
 
 /* REGLAS GRAMATICALES */
 
-expresion		 	::= relacion:rel{:
-						RESULT = rel;
+program ::= exp:prog{:
+				raiz = prog;
+		:};
+exp		 	::= exp:condicionI UNI exp_simple:condicionD {:
+					RESULT = new NodoOperacion("UNI",condicionI,condicionD);
+				:}
+				| exp:condicionI INT exp_simple:condicionD {:
+					RESULT = new NodoOperacion("INT",condicionI,condicionD);
+				:}
+				| exp:condicionI PROC exp_simple:condicionD {:
+					RESULT = new NodoOperacion("PROC",condicionI,condicionD);
 					:}
-					
-					| expresion:condicionI UNI expresion:condicionD{:
-						if(raiz==null){
-							raiz= new NodoOperacion("UNI",condicionI,condicionD);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano())
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoOperacion("UNI",condicionI,condicionD));
-						}
+				| exp:condicionI DIV exp_simple:condicionD {:
+					RESULT = new NodoOperacion("DIV",condicionI,condicionD);
+					:} 
+				| exp:condicionI DIF exp_simple:condicionD {:
+					RESULT = new NodoOperacion("DIF",condicionI,condicionD);
 					:}
-					| expresion:condicionI INT expresion:condicionD {:
-						if(raiz==null){
-							raiz = new NodoOperacion("INT",condicionI,condicionD);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano())
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoOperacion("INT",condicionI,condicionD));
-						}
+				| exp:condicionI REUN exp_simple:condicionD {:
+					RESULT = new NodoOperacion("REUN",condicionI,condicionD);
 					:}
-					| expresion:condicionI DIV expresion:condicionD {:
-						if(raiz==null){
-							raiz = new NodoOperacion("DIV",condicionI,condicionD);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano())
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoOperacion("DIV",condicionI,condicionD));
-						}
-					:}
-					| expresion:condicionI DIF expresion:condicionD {:
-						if(raiz==null){
-							raiz = new NodoOperacion("DIF",condicionI,condicionD);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano())
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoOperacion("DIF",condicionI,condicionD));
-						}
-					:}
-					| expresion:condicionI PROC expresion:condicionD {:
-						if(raiz==null){
-							raiz = new NodoOperacion("PROC",condicionI,condicionD);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano())
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoOperacion("PROC",condicionI,condicionD));
-						}
-					:}
-					| expresion:condicionI REUN expresion:condicionD {:
-						if(raiz==null){
-							raiz = new NodoOperacion("REUN",condicionI,condicionD);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano())
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoOperacion("REUN",condicionI,condicionD));
-						}
-					:}
-					| SEL predicado:restricciones IPAREN expresion:exp DPAREN {:
-						if(raiz==null){
-								raiz = new NodoExpresion("SEL",restricciones,exp);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano()) 
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoExpresion("SEL",restricciones,exp));
-						}
-					:}
-					| PRO predicado:restricciones IPAREN expresion:exp DPAREN {:
-						if(raiz==null){
-							raiz = new NodoExpresion("PRO",restricciones,exp);
-						}else{
-							NodoBase aux = raiz;
-							while(aux.tieneHermano()) 
-								aux = aux.getHermanoDerecha();
-							aux.setHermanoDerecha(new NodoExpresion("PRO",restricciones,exp));
-						}
-					:}
+				|exp_simple:expresion {:
+					RESULT = expresion;
+				:}
+				
 			;
+			
+exp_simple 	::= SEL predicado:restricciones IPAREN exp:rela DPAREN {:
+						RESULT = new NodoExpresion("SEL",restricciones,rela);
+					:} 
+				| PRO predicado:restricciones IPAREN exp:rela DPAREN {:
+						RESULT = new NodoExpresion("PRO",restricciones,rela);
+					:}	
+				| relacion:rela{:
+					RESULT=rela;
+				:}
+			;
+							
 			
 predicado			::= predicado:conI COMA restriccion:conD {:
 						NodoBase hijoActual = conI;
@@ -237,19 +217,20 @@ restriccion			::= nombre:campo{:
 						RESULT = operacion;
 					:}
 			;
-relacion			::= ID:palabra {:
-						RESULT = new NodoId(palabra.toString());
+relacion			::= identificador:palabra {:
+						RESULT = palabra;
 					:}
 					| ID:palabra ID:sinonimo {:
 						RESULT = new NodoId(palabra.toString(), sinonimo.toString());
 					:}
+					
 			;
 			
-nombre				::= ID:palabra {:
-						RESULT = new NodoId(palabra.toString());
+nombre				::= identificador:palabra {:
+						RESULT = palabra;
 					:}
-					| COMI ID:palabra COMI {:
-						RESULT = new NodoId(palabra.toString());
+					| COMI identificador:palabra COMI {:
+						RESULT = palabra;
 					:}
 					| NUM:numero {:
 						RESULT = new NodoNumero(numero);
@@ -269,4 +250,8 @@ nombre				::= ID:palabra {:
 					| nombre:opeI DIVI nombre:opeD {:
 						RESULT = new NodoComparacion(opeI,tipoOp.divi,opeD);
 					:}
-			;			
+			;
+identificador		::= ID:palabra {:
+						RESULT = new NodoId(palabra.toString());
+					:}		
+			;
