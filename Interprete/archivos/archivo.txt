@@ -1,1 +1,13 @@
-PRO sal+300 (saldos)
+PRO nombre (articulos PROC SEL p="p1" (envios))
+
+
+
+
+
+
+
+
+
+
+
+

@@ -23,8 +23,7 @@ Mas informacion en: http//4thmouse.com/index.php/2007/02/15/using-custom-symbols
 		parser_obj.parse();
 		
 		NodoBase raiz =  parser_obj.action_obj.getRaiz();
-		System.out.println("TIPO RAIZ: "+parser_obj.action_obj.rootType(raiz));
-		//Util.imprimirArbol(raiz); 
+		Util.imprimirArbol(raiz); 
 
 	}
 
@@ -121,19 +120,37 @@ program ::= exp:prog{:
 exp		 	::= exp:condicionI UNI exp_simple:condicionD {:
 					RESULT = new NodoOperacion("UNI",condicionI,condicionD);
 				:}
+				| IPAREN exp:condicionI DPAREN UNI IPAREN exp_simple:condicionD DPAREN{:
+					RESULT = new NodoOperacion("UNI",condicionI,condicionD);
+				:}
 				| exp:condicionI INT exp_simple:condicionD {:
+					RESULT = new NodoOperacion("INT",condicionI,condicionD);
+				:}
+				| IPAREN exp:condicionI DPAREN INT IPAREN exp_simple:condicionD DPAREN {:
 					RESULT = new NodoOperacion("INT",condicionI,condicionD);
 				:}
 				| exp:condicionI PROC exp_simple:condicionD {:
 					RESULT = new NodoOperacion("PROC",condicionI,condicionD);
 					:}
+				| IPAREN exp:condicionI DPAREN PROC IPAREN exp_simple:condicionD DPAREN {:
+					RESULT = new NodoOperacion("PROC",condicionI,condicionD);
+					:}
 				| exp:condicionI DIV exp_simple:condicionD {:
+					RESULT = new NodoOperacion("DIV",condicionI,condicionD);
+					:} 
+				| IPAREN exp:condicionI DPAREN DIV IPAREN exp_simple:condicionD DPAREN{:
 					RESULT = new NodoOperacion("DIV",condicionI,condicionD);
 					:} 
 				| exp:condicionI DIF exp_simple:condicionD {:
 					RESULT = new NodoOperacion("DIF",condicionI,condicionD);
 					:}
+				| IPAREN exp:condicionI DPAREN DIF IPAREN exp_simple:condicionD DPAREN{:
+					RESULT = new NodoOperacion("DIF",condicionI,condicionD);
+					:}
 				| exp:condicionI REUN exp_simple:condicionD {:
+					RESULT = new NodoOperacion("REUN",condicionI,condicionD);
+					:}
+				| IPAREN exp:condicionI DPAREN REUN IPAREN exp_simple:condicionD DPAREN{:
 					RESULT = new NodoOperacion("REUN",condicionI,condicionD);
 					:}
 				|exp_simple:expresion {:
@@ -144,7 +161,10 @@ exp		 	::= exp:condicionI UNI exp_simple:condicionD {:
 			
 exp_simple 	::= SEL predicado:restricciones IPAREN exp:rela DPAREN {:
 						RESULT = new NodoExpresion("SEL",restricciones,rela);
-					:} 
+					:}
+				| SEL IPAREN predicado:restricciones DPAREN IPAREN exp:rela DPAREN {:
+						RESULT = new NodoExpresion("SEL",restricciones,rela);
+					:}
 				| PRO predicado:restricciones IPAREN exp:rela DPAREN {:
 						RESULT = new NodoExpresion("PRO",restricciones,rela);
 					:}	

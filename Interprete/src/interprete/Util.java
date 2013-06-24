@@ -15,7 +15,7 @@ public class Util {
     static int sangria = 0;
     static int cont =0;
     public static void imprimirArbol(NodoBase raiz){
-       // System.out.println("SANGRIA: "+sangria);
+
         sangria+=2;
         while (raiz != null){
             imprimirEspacios();

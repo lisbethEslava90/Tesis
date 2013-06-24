@@ -1,1 +1,0 @@
-PRO nombre_cliente(SEL ciudad_cliente="Peguerinos" (cliente) )

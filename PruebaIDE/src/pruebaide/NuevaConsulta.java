@@ -13,8 +13,6 @@ import javax.swing.*;
  */
 public class NuevaConsulta extends  JPanel{
 
-    //DARLE MEMORIA EN EL CONSTRUCTO  A TOOOODOOO!!!!
-
     private String consulta = "";
     private JTextArea areaConsulta;
     private JLabel nombre;
@@ -45,8 +43,7 @@ public class NuevaConsulta extends  JPanel{
         this.add(ejecutar);
         this.add(nombre);
         this.add(nombreConsulta);
-        this.add(areaConsulta);
-        
+        this.add(areaConsulta);        
     }
 
     public void maximizar(){

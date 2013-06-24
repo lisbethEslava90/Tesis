@@ -1,0 +1,161 @@
+public class Funciones {
+
+    private int valor;
+    private String nuevaTabla;
+    private boolean operacionLogica, resultado;
+
+    public String OperacionUnion(String relacionIzq,String relacionDer){
+    /* las tablas deben tener el mismo numero de columnas y dominios compatibles
+     * se crea una nueva tabla con las filas de ambas tablas a unir
+     * las filas repetidas aparecen una sola vez
+     */
+        return nuevaTabla;
+    }
+
+    public String OperacionInterseccion(String relacionIzq,String relacionDer){
+            /*	las tablas deben tener el mismo numero de columnas y dominios compatibles
+             *	se crea una nueva tabla formada por las filas que aparezcan en ambas tablas
+             *	y las columnas de una de las tablas
+             */
+        return nuevaTabla;
+    }
+
+    public String OperacionProductoCartesiano(String relacionIzq,String relacionDer){
+            /*	debe haber un atributo en la tabla relacionIzq que este presente en la tabla relacionDer
+             *	cada fila de la relacionIzq sera combinada con las filas de la relacionDer
+             * 	uniendo todas sus columnas, exceptuando las filas donde el atributo comun en
+             *	ambas tablas sea el mismo
+             */
+        return nuevaTabla;
+    }
+
+    public String OperacionDivision(String relacionIzq,String relacionDer){
+            /*	la tabla relacionDer debe ser subconjunto de relacionIzq
+             *	se crea una nueva tabla con los atributos de la relacionIzq que esten en relacionDer
+             * 	sin repiticiones y sin la columna comun en ambas tablas
+             */
+        return nuevaTabla;
+    }
+
+    public String OperacionDiferencia(String relacionIzq,String relacionDer){
+            /*	halla las filas que estan en una tabla pero no en la otra, es decir
+             *	se crea una nueva tabla con las filas que estan en relacionIzq pero no en relacionDer
+             * 	ambas tablas deben tener el mismo numero de columnas y dominios compatibles
+             */
+        return nuevaTabla;
+    }
+
+    public String OperacionReunionNatural(String relacionIzq,String relacionDer){
+            /*	se hace un producto cartesiano y realiza una seleccion donde los atributos
+             *	sean iguales en ambas relaciones, elimina los repetidos
+             * 	ambas tablas deben tener el mismo numero de columnas y dominios compatibles
+             */
+        return nuevaTabla;
+    }
+
+    public String OperacionSeleccion(String predicado, String relacion){
+            /*	selecciona las filas que satisfacen el predicado
+             *	de la relacion especificada en una nueva tabla
+             */
+        return nuevaTabla;
+    }
+
+    public String OperacionProyeccion(String predicado,String relacion){
+            /*	Muestra las columnas especificadas en el predicado
+             *	elimina las filas duplicadas de dicha relacion
+             */
+        return nuevaTabla;
+    }
+
+    public boolean  OperacionLogicaAnd(String condicionIzq, String condicionDer){
+        /*
+         * La condición izquierda y la derecha deben cumplirse para retornar true
+         * de lo contrario retorna false
+         */
+        return operacionLogica;
+    }
+
+    public boolean  OperacionLogicaOr(String condicionIzq, String condicionDer){
+        /*
+         * si se cumple alguna de las condiciones retorna true
+         * sino se cumple ninguna retorna false
+         */
+        return operacionLogica;
+    }
+
+    public boolean  OperacionLogicaNot(String condicionIzq, String condicionDer){
+        /*
+         * si se cumple la negacion de las condiciones retorna true
+         * de lo contrario retorna false
+         */
+        return operacionLogica;
+    }
+
+    public boolean OperacionComparacionIgual(String condicionIzq,String condicionDer){
+        /*
+         * la condicion izquierda debe ser igual a la condicion derecha, retorna true
+         * sino son iguales retorna false
+         */
+        return resultado;
+    }
+
+    public boolean OperacionComparacionDiferente(String condicionIzq,String condicionDer){
+        /*
+         * la condicion izquierda debe ser diferente a la condicion derecha, retorna true
+         * si son iguales retorna false
+         */
+        return resultado;
+    }
+
+    public boolean OperacionComparacionMenor(String condicionIzq,String condicionDer){
+        /*
+         * la condicion izquierda debe ser menor a la condicion derecha, retorna true
+         * sino retorna false
+         */
+        return resultado;
+    }
+
+    public boolean OperacionComparacionMenorIgual(String condicionIzq,String condicionDer){
+        /*
+         * la condicion izquierda debe ser menor o igual a la condicion derecha, retorna true
+         * sino retorna false
+         */
+        return resultado;
+    }
+
+    public boolean OperacionComparacionMayor(String condicionIzq,String condicionDer){
+        /*
+         * la condicion izquierda debe ser mayor a la condicion derecha, retorna true
+         * sino retorna false
+         */
+        return resultado;
+    }
+
+    public boolean OperacionComparacionMayorIgual(String condicionIzq,String condicionDer){
+        /*
+         * la condicion izquierda debe ser mayor o igual a la condicion derecha, retorna true
+         * sino retorna false
+         */
+        return resultado;
+    }
+
+    public int OperacionMatSumar(int valorA,int valorB){
+        //Se suma el valorA y el valorB
+        return valor;
+    }
+
+    public int OperacionMatRestar(int valorA,int valorB){
+        //Se resta el valorA del valorB
+        return valor;
+    }
+
+    public int OperacionMatMultiplicar(int valorA,int valorB){
+        //Se mutiplica el valorA con el valorB
+        return valor;
+    }
+
+    public int OperacionMatDividir(int valorA,int valorB){
+        //Se divide el valorA con el valorB
+        return valor;
+    }
+}
