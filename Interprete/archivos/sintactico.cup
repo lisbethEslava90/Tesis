@@ -99,6 +99,7 @@ terminal String ID;
 non terminal NodoBase exp;
 non terminal NodoBase exp_simple;
 non terminal NodoBase predicado;
+non terminal NodoBase expresionBool;
 non terminal NodoBase restriccion;
 non terminal NodoBase nombre;
 non terminal NodoBase relacion;
@@ -107,50 +108,52 @@ non terminal NodoBase program;
 
 precedence left SEL, PRO;
 precedence left PROC, REUN, INT, UNI, DIF, DIV;
-precedence left AND, OR, NOT;
 precedence left IPAREN, DPAREN;
-precedence left SUMA, RESTA;
+precedence left RESTA, SUMA;
 precedence left MULTI, DIVI;
+precedence left OR; 
+precedence left AND; 
+precedence left NOT;
 
 /* REGLAS GRAMATICALES */
 
 program ::= exp:prog{:
 				raiz = prog;
 		:};
-exp		 	::= exp:condicionI UNI exp_simple:condicionD {:
+exp		 	::= exp:condicionI UNI exp:condicionD {:
 					RESULT = new NodoOperacion("UNI",condicionI,condicionD);
 				:}
-				| IPAREN exp:condicionI DPAREN UNI IPAREN exp_simple:condicionD DPAREN{:
+				| IPAREN exp:condicionI DPAREN UNI IPAREN exp:condicionD DPAREN{:
 					RESULT = new NodoOperacion("UNI",condicionI,condicionD);
 				:}
-				| exp:condicionI INT exp_simple:condicionD {:
+				| exp:condicionI INT exp:condicionD {:
 					RESULT = new NodoOperacion("INT",condicionI,condicionD);
 				:}
-				| IPAREN exp:condicionI DPAREN INT IPAREN exp_simple:condicionD DPAREN {:
+				| IPAREN exp:condicionI DPAREN INT IPAREN exp:condicionD DPAREN {:
 					RESULT = new NodoOperacion("INT",condicionI,condicionD);
 				:}
-				| exp:condicionI PROC exp_simple:condicionD {:
+				| exp:condicionI PROC exp:condicionD {:
 					RESULT = new NodoOperacion("PROC",condicionI,condicionD);
 					:}
-				| IPAREN exp:condicionI DPAREN PROC IPAREN exp_simple:condicionD DPAREN {:
+				| IPAREN exp:condicionI DPAREN PROC IPAREN exp:condicionD DPAREN {:
 					RESULT = new NodoOperacion("PROC",condicionI,condicionD);
 					:}
-				| exp:condicionI DIV exp_simple:condicionD {:
+				| exp:condicionI DIV exp:condicionD {:
 					RESULT = new NodoOperacion("DIV",condicionI,condicionD);
 					:} 
-				| IPAREN exp:condicionI DPAREN DIV IPAREN exp_simple:condicionD DPAREN{:
+				| IPAREN exp:condicionI DPAREN DIV IPAREN exp:condicionD DPAREN{:
 					RESULT = new NodoOperacion("DIV",condicionI,condicionD);
 					:} 
-				| exp:condicionI DIF exp_simple:condicionD {:
+				| exp:condicionI DIF exp:condicionD {:
 					RESULT = new NodoOperacion("DIF",condicionI,condicionD);
 					:}
-				| IPAREN exp:condicionI DPAREN DIF IPAREN exp_simple:condicionD DPAREN{:
+				| IPAREN exp:condicionI DPAREN DIF IPAREN exp:condicionD DPAREN{:
 					RESULT = new NodoOperacion("DIF",condicionI,condicionD);
 					:}
 				| exp:condicionI REUN exp_simple:condicionD {:
 					RESULT = new NodoOperacion("REUN",condicionI,condicionD);
 					:}
-				| IPAREN exp:condicionI DPAREN REUN IPAREN exp_simple:condicionD DPAREN{:
+				| IPAREN exp:condicionI DPAREN REUN IPAREN exp:condicionD DPAREN{:
 					RESULT = new NodoOperacion("REUN",condicionI,condicionD);
 					:}
 				|exp_simple:expresion {:
@@ -186,20 +189,25 @@ predicado			::= predicado:conI COMA restriccion:conD {:
 							RESULT=conD;
 						}
 					:}	
-					| IPAREN restriccion:conI DPAREN AND predicado:conD {:
+					| expresionBool:bool {:
+						RESULT = bool;
+					:}
+			;
+			
+expresionBool		::= restriccion:restri{:
+						RESULT = restri;
+					:}			
+					| expresionBool:conI AND expresionBool:conD {:
 						RESULT = new NodoOperadorLogico(tipoOp.and, conI, conD);
 					:}
-					| IPAREN restriccion:conI DPAREN OR predicado:conD {:
+					| expresionBool:conI OR expresionBool:conD {:
 						RESULT = new NodoOperadorLogico(tipoOp.or, conI, conD);
 					:}
-					| IPAREN restriccion:conI DPAREN NOT predicado:conD {:
-						RESULT = new NodoOperadorLogico(tipoOp.not, conI, conD);
+					| IPAREN expresionBool:ex DPAREN {:
+						RESULT = ex;
 					:}
-					| IPAREN restriccion:cond DPAREN {:
-						RESULT = cond;
-					:}
-					| restriccion:restri {: 
-						RESULT = restri;
+					| NOT expresionBool:ex {:
+						RESULT = new NodoOperadorLogico(tipoOp.not,null,ex);
 					:}
 			;
 
@@ -223,15 +231,6 @@ restriccion			::= nombre:campo{:
 					:}
 					| nombre:campo MAYOREQ nombre:condicion {:
 						RESULT = new NodoComparacion(campo,tipoOp.mayorIgual,condicion);
-					:}
-					| restriccion:resI AND restriccion:resD {:
-						RESULT = new NodoOperadorLogico(tipoOp.and, resI, resD);
-					:}
-					| restriccion:resI OR restriccion:resD {:
-						RESULT = new NodoOperadorLogico(tipoOp.or, resI, resD);
-					:}
-					| restriccion:resI NOT restriccion:resD {:
-						RESULT = new NodoOperadorLogico(tipoOp.not, resI, resD);
 					:}
 					| IPAREN nombre:operacion DPAREN {:
 						RESULT = operacion;

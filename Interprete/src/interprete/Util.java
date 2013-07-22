@@ -90,12 +90,6 @@ public class Util {
 
             tipoOp sel = ((NodoComparacion) raiz).getOperacion();
 
-                if (sel == tipoOp.and)
-                    System.out.println("AND");
-                if (sel == tipoOp.or)
-                    System.out.println("OR");
-                if (sel == tipoOp.not)
-                    System.out.println("NOT");
                 if (sel == tipoOp.diferente)
                     System.out.println("!=");
                 if (sel == tipoOp.divi)
@@ -164,6 +158,5 @@ public class Util {
                 if (sel == tipoOp.not)
                     System.out.println("NOT");
         }
-
     }
 }

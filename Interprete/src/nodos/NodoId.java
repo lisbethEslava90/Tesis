@@ -29,5 +29,5 @@ public class NodoId extends NodoBase{
     public String getSinonimo() {
         return sinonimo;
     }
-   
+
 }

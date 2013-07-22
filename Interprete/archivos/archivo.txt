@@ -1,13 +1,1 @@
-PRO nombre (articulos PROC SEL p="p1" (envios))
-
-
-
-
-
-
-
-
-
-
-
-
+SEL salario >60000 (PRO num_dept, salario*2 (empleado))

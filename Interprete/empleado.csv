@@ -1,0 +1,7 @@
+"nombre","apellido1","apellido2","nss","f_nac","direccion","sexo","salario","supervisor","num_dept"
+"José","López","Gómez","1245","21/01/1971","Real 8","Varón","34000","5544","2"
+"Ana","Moreira","González","5874","25/07/1985","Percebe 1","Mujer","38000","5544","2"
+"María","Pérez","Mosquera","5544","21/08/1969","Lechuga 6","Mujer","50000","8877","2"
+"Pedro","Gonzáles","Ruíz","8811","07/07/1979","Puerro 10","Varón","25000","1122","1"
+"Luis","Izquierdo","Sánchez","1122","09/09/1970","Calcetín 5","Varón","30000","Nulo","1"
+"Raquel","Núñez","Izquierdo","8877","08/08/1980","Rosa 8","Mujer","30000","1122","1"
