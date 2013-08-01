@@ -1,23 +1,37 @@
-SEL nombre_sucursal = "navacerrada" (prestamo)
+SEL nombre_sucursal = "Navacerrada" (prestamo)
 SEL importe>1200 (prestamo)
-SEL nombre_sucursal = "navacerrada" AND importe >1200(prestamo)
-SEL departamento = 10 (empleado)
+SEL nombre_sucursal = "Navacerrada" AND importe >1200(prestamo)
 PRO nombre_cliente (prestatario)
 PRO numero_prestamo,importe(prestamo)
 PRO nombre_cliente(SEL ciudad_cliente="Peguerinos" (cliente) )
 (PRO nombre_cliente(prestatario)) UNI (PRO nombre_cliente(impositor))
 PRO nombre_cliente (impositor) DIF PRO nombre_cliente (prestatario)
-SEL nombre_sucursal = "navacerrada" (prestatario PROC prestamo)
-SEL p.numero_prestamo = a.numero_pretamo (SEL nombre_sucursal = "navacerrada" (prestatario p PROC prestamo a ))
-PRO nombre_cliente ( SEL p.numero_prestamo = a.numero_prestamo ( SEL nombre_sucursal = "navacerrada" (prestatario p PROC prestamo a )))
-PRO c.saldo*10 ( SEL c.saldo < d.saldo ( cuenta c PROC cuenta d))
-(PRO saldo (cuenta)) DIF (PRO c.saldo ( SEL c.saldo < d.saldo ( cuenta c PROC cuenta d)))
+SEL nombre_sucursal = "Navacerrada" (prestatario PROC prestamo)
+SEL relacionI.numero_prestamo = relacionD.numero_pretamo (SEL nombre_sucursal = "Navacerrada" (prestatario PROC prestamo  ))
+PRO nombre_cliente(SEL relacionI.numero_prestamo = relacionD.numero_pretamo (SEL nombre_sucursal = "Navacerrada" (prestatario PROC prestamo  )))
 PRO calle_cliente, ciudad_cliente (SEL nombre_cliente = "Gomez" (cliente))
-PRO cliente.nombre_cliente ( cliente PROC PRO calle_cliente, ciudad_cliente (SEL nombre_cliente = "Gomez" (cliente)))
+PRO nombre_cliente ( cliente PROC PRO calle_cliente, ciudad_cliente (SEL nombre_cliente = "Gomez" (cliente)))
 PRO nombre_cliente(prestatario) INT PRO nombre_cliente (impositor)
 PRO nombre_cliente, numero_prestamo, importe (prestatario REUN prestamo)
 (PRO nombre_cliente, nombre_sucursal (impositor REUN cuenta)) DIV (PRO nombre_sucursal ( SEL ciudad_sucursal = "Arganzuela" (sucursal)))
-(PRO numero_cuenta, nombre_sucursal, saldo (SEL saldo > 10000 (cuenta))) UNI (PRO numero_cuenta, nombre_sucursal, saldo (SEL saldo <= 10000 (cuenta)))
+PRO nss(SEL num_dept = 2 (empleado)) UNI PRO supervisor(SEL num_dept=2 (empleado))
+Departamento PROC Localizaciones_Dept
+PRO Nombre_Dept, Localizacion_Dept(SEL relacionI.Num_Dept = relacionD.Num_Dept(Departamento PROC Localizaciones_Dept))
+SEL CIUDAD = "CACERES" (ARTICULOS)
+PRO P#(SEL T#=T1 (ENVIOS))
+PRO P#(SEL (T#="T1") AND (C#="C1") (ENVIOS))
+PRO TNOMBRE (ARTICULOS REUN SEL P#=P1 (ENVIOS))
+PRO C#((ENVIOS) REUN (SEL CIUDAD="MADRID" (ARTICULOS)) )
+(PRO P# (SEL T#="T1" (ENVIOS)))  INT (PRO P# (SEL T#="T2" (ENVIOS)))
+PRO T# (ENVIOS REUN PRO C#(SEL P#="P1" (ENVIOS)))
+PRO C# ((SEL CIUDAD="SEVILLA" (PROVEEDORES)) REUN (PRO C#, P# ((ENVIOS) REUN (SEL CIUDAD = "SEVILLA" (ARTICULOS)))))
+
+
+
+
+
+PRO c.saldo*10 ( SEL c.saldo < d.saldo ( cuenta c PROC cuenta d))
+(PRO saldo (cuenta)) DIF (PRO c.saldo ( SEL c.saldo < d.saldo ( cuenta c PROC cuenta d)))
 SEL ((dno=4 AND salario > 25000) OR (ND = 5 AND salario > 30000)) (empleado)
 PRO nombre, apellido, salario (SEL nd = 5 (EMPLEADO))
 SEL nombre = "james" AND apellido = "Borg" (empleado)
@@ -56,3 +70,8 @@ PRO (sueldo*3),(edad+6),nombre (sueldos)
 PRO nombre="lis",
 apellido="eslava"
 (alumno)
+SEL departamento = 10 (empleado)
+
+de la 1 a la 16 son consultas del libro impreso
+de la 17 a la 19 son consultas del pdf ALGEBRA RELACIONAL TABLAS Y CONSULTAS
+de la 20 a la 26 son consultas del pdf ejercicios resueltos

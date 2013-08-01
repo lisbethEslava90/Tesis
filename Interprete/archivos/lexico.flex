@@ -26,7 +26,7 @@ digito			= [0-9]
 numero			= {digito}+("."{digito}+)?
 fecha			= {digito}+("/"){digito}+("/"){digito}+	
 letra			= [a-zA-Z]
-identificador	= {letra}([a-zA-Z0-9.%$_])*
+identificador	= {letra}([a-zA-Z0-9.%$_#])*
 nuevalinea		= \n | \n\r | \r\n
 espacio			= [ \t]+
 

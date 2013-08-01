@@ -1,1 +1,1 @@
-SEL salario >60000 (PRO num_dept, salario*2 (empleado))
+SEL relacionD.Num_Dept > 1+1 (Departamento PROC Localizaciones_Dept)

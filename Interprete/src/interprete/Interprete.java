@@ -63,6 +63,7 @@ public class Interprete {
             resultado = funcion.OperacionSeleccion(nodoExpresion.getPredicado(),relacion);
             pila.add(resultado);
             ImprimirTabla(resultado);
+            
         }
         else if(nodoExpresion.getTIPO_EXP().equals("PRO")){
             Table<Integer, Integer, String> relacion = TreeBasedTable.create();
@@ -88,6 +89,8 @@ public class Interprete {
                 }
                 predicado = predicado.getHermanoDerecha();
             }
+            System.out.println("lista: "+listaPredicado);
+            System.out.println("listaAuxiliar: "+listaPredicadoAuxiliar);
 
             if(nodoExpresion.getRelacion() instanceof NodoId){
                 pila.add(funcion.cargarArchivo(((NodoId)nodoExpresion.getRelacion()).getId()));
@@ -108,6 +111,7 @@ public class Interprete {
 
     private void nodoOperacion(NodoOperacion nodoOperacion){
         String sel = nodoOperacion.getTIPO_OPE();
+        String nombreI="", nombreD="";
         
         Table<Integer, Integer, String> relacionI = TreeBasedTable.create();
         Table<Integer, Integer, String> relacionD = TreeBasedTable.create();
@@ -156,14 +160,16 @@ public class Interprete {
            if(sel.equals("PROC")){
                 System.out.println("PROC");
                 if(nodoOperacion.getOpIzq() instanceof NodoId){
-                    pila.add(funcion.cargarArchivo(((NodoId)nodoOperacion.getOpIzq()).getId()));
+                    nombreI = ((NodoId)nodoOperacion.getOpIzq()).getId();
+                    pila.add(funcion.cargarArchivo(nombreI));
                 }else{
                     interpretarNodo(nodoOperacion.getOpIzq());
                 }
                 relacionI.putAll((Table<Integer, Integer, String>)pila.pop());
                 
                 if(nodoOperacion.getOpDer() instanceof NodoId){
-                     pila.add(funcion.cargarArchivo(((NodoId)nodoOperacion.getOpDer()).getId()));
+                    nombreD = ((NodoId)nodoOperacion.getOpDer()).getId();
+                    pila.add(funcion.cargarArchivo(nombreD));
                 }else{
                     interpretarNodo(nodoOperacion.getOpDer());
                 }
