@@ -6,6 +6,7 @@
 package pruebaide;
 
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -14,13 +15,20 @@ import javax.swing.JPanel;
 public class Resultado extends JPanel{
 
     private String name;
+    private JTextArea areaResultado;
 
     public Resultado(String nombre) {
         this.name = nombre;
 
+        areaResultado = new JTextArea();
+        areaResultado.setBounds(30, 10, 500, 210);
+        this.setLayout(null);
+        this.add(areaResultado);
     }
     public String getNombre(){
-
         return name;
+    }
+    public void SetAreaResultado(String texto){
+        areaResultado.setText(texto);
     }
 }

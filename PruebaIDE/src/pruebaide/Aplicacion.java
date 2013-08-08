@@ -12,10 +12,13 @@
 package pruebaide;
 
 import java.awt.Cursor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Vector;
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import interprete.Funciones;
 
 /**
  *
@@ -26,32 +29,63 @@ public class Aplicacion extends javax.swing.JFrame {
     private int contPestanas = 1;
     //private NuevaConsulta pestana = new NuevaConsulta(contPestanas);
     private ArrayList<NuevaConsulta> ListaPestana;// = new ArrayList<NuevaConsulta>();
+    private ArrayList<Resultado> ListaResultado;
+    final NuevaConsulta pestana;
+    private Vector<String> consultas;
+    private JFileChooser archivo;
+    private Funciones funciones;
+    private Resultado resultado;
 
     /** Creates new form VentanaSplit */
     public Aplicacion() {
         initComponents();
 
-        NuevaConsulta pestana = new NuevaConsulta(contPestanas);
+        funciones = new Funciones();
+        resultado = new Resultado(null);
+        archivo = new JFileChooser("relaciones/");
+        consultas = new Vector<String>();
+        this.setLocationRelativeTo(null);
+        pestana = new NuevaConsulta(contPestanas, this);
         ListaPestana = new ArrayList<NuevaConsulta>();
-        ListaPestana.add(new NuevaConsulta(contPestanas));
+        ListaPestana.add(new NuevaConsulta(contPestanas,this));
+        ListaResultado = new ArrayList<Resultado>();
         this.ZonaConsulta.addTab("Consulta 1", ListaPestana.get(0)); //add(pestana);
         Resultado auxiliar = ListaPestana.get(0).getResultado();
+        ListaResultado.add(auxiliar);
         ZonaResultado.addTab(auxiliar.getNombre(),auxiliar);
         this.jSplitPane1.setDividerLocation(0.25);
-        this.jSplitPane2.setDividerLocation(0.7);
+     //   this.jSplitPane2.setDividerLocation(0.4);
         this.jSplitPane3.setDividerLocation(0.7);
+        consultas.add("Consulta 1");
+        historialConsultas.setListData(consultas);
 
+        archivo.addChoosableFileFilter(new FileFilter() {
 
-        pestana.ejecutar.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-
+            @Override
+            public boolean accept(File f) {
+                if(f.isDirectory()){
+                    return true;
+                }else{
+                    return f.getName().toLowerCase().endsWith(".csv");
+                }
+            }
+            @Override
+            public String getDescription() {
+                return "Archivos .csv";
             }
         });
-        
     }
 
+    public void CambiarNombre(int indice, String texto){
+        ZonaConsulta.setTitleAt(indice, texto);
+        ZonaResultado.setTitleAt(indice, "Resultado de: "+texto);
+        consultas.set(indice, texto);
+        historialConsultas.setListData(consultas);
+    }
+
+    public ArrayList<NuevaConsulta> getListaPestana() {
+        return ListaPestana;
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -87,7 +121,8 @@ public class Aplicacion extends javax.swing.JFrame {
         historialConsultas = new javax.swing.JList();
         jMenuBar1 = new javax.swing.JMenuBar();
         Archivo = new javax.swing.JMenu();
-        ProyectoNuevo = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         ConsultaNueva.setText("Nueva Consulta");
@@ -99,6 +134,7 @@ public class Aplicacion extends javax.swing.JFrame {
         jPopupMenu1.add(ConsultaNueva);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -286,6 +322,11 @@ public class Aplicacion extends javax.swing.JFrame {
 
         jSplitPane3.setTopComponent(jScrollPane3);
 
+        ZonaResultado.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                ZonaResultadoStateChanged(evt);
+            }
+        });
         jScrollPane4.setViewportView(ZonaResultado);
 
         jSplitPane3.setRightComponent(jScrollPane4);
@@ -294,20 +335,20 @@ public class Aplicacion extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PanelIconos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
+            .addComponent(PanelIconos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(PanelIconos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))
+                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel2);
 
-        jSplitPane2.setDividerLocation(250);
+        jSplitPane2.setDividerLocation(80);
         jSplitPane2.setDividerSize(2);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
@@ -332,11 +373,24 @@ public class Aplicacion extends javax.swing.JFrame {
         jSplitPane1.setLeftComponent(jSplitPane2);
 
         Archivo.setText("Archivo");
-        Archivo.setFont(new java.awt.Font("Tahoma", 0, 12));
+        Archivo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
-        ProyectoNuevo.setFont(new java.awt.Font("Tahoma", 0, 12));
-        ProyectoNuevo.setText("Proyecto Nuevo");
-        Archivo.add(ProyectoNuevo);
+        jMenuItem1.setText("Nueva Relación");
+        jMenuItem1.setName("NuevaRelacion"); // NOI18N
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        Archivo.add(jMenuItem1);
+
+        jMenuItem2.setText("Cargar Relación");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        Archivo.add(jMenuItem2);
 
         jMenuBar1.add(Archivo);
 
@@ -349,11 +403,11 @@ public class Aplicacion extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
+            .addComponent(jSplitPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         pack();
@@ -361,8 +415,8 @@ public class Aplicacion extends javax.swing.JFrame {
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         // TODO add your handling code here:
-        this.jSplitPane2.setDividerLocation(0.7);
-        this.jSplitPane3.setDividerLocation(0.7);
+        this.jSplitPane2.setDividerLocation(0.53);
+        this.jSplitPane3.setDividerLocation(0.45);
     }//GEN-LAST:event_formComponentResized
 
     private void SeleccionIconMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SeleccionIconMouseEntered
@@ -496,10 +550,13 @@ public class Aplicacion extends javax.swing.JFrame {
     private void ConsultaNuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaNuevaActionPerformed
         // TODO add your handling code here:
         contPestanas++;
-        ListaPestana.add(new NuevaConsulta(contPestanas));
+        ListaPestana.add(new NuevaConsulta(contPestanas,this));
         this.ZonaConsulta.addTab("Consulta "+contPestanas, ListaPestana.get(contPestanas-1));
         Resultado auxiliar = ListaPestana.get(contPestanas-1).getResultado();
+        ListaResultado.add(auxiliar);
         ZonaResultado.addTab(auxiliar.getNombre(),auxiliar);
+        consultas.add("Consulta "+contPestanas);
+        historialConsultas.setListData(consultas);
     }//GEN-LAST:event_ConsultaNuevaActionPerformed
 
     private void ZonaConsultaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_ZonaConsultaStateChanged
@@ -514,6 +571,38 @@ public class Aplicacion extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_ZonaConsultaStateChanged
+
+    private void ZonaResultadoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_ZonaResultadoStateChanged
+        // TODO add your handling code here:
+        if(ZonaConsulta.getTabCount()==0) return;;
+        for(int i=0; i<ListaResultado.size(); i++){
+            if(ListaResultado.get(i).isVisible()){
+                ZonaConsulta.setSelectedIndex(i);
+                break;
+            }
+        }
+    }//GEN-LAST:event_ZonaResultadoStateChanged
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        
+        int seleccion = archivo.showOpenDialog(null);
+
+        switch(seleccion){
+            case JFileChooser.CANCEL_OPTION:
+                break;
+            case JFileChooser.APPROVE_OPTION:
+                funciones.cargarArchivo(archivo.getSelectedFile());
+                break;
+            case JFileChooser.ERROR_OPTION:
+                break;
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void agregarSimbolo(String simbolo){
 
@@ -567,7 +656,6 @@ public class Aplicacion extends javax.swing.JFrame {
     private javax.swing.JPanel PanelIconos;
     private javax.swing.JLabel ProductoIcon;
     private javax.swing.JLabel ProyeccionIcon;
-    private javax.swing.JMenuItem ProyectoNuevo;
     private javax.swing.JLabel ReunionIcon;
     private javax.swing.JLabel SeleccionIcon;
     private javax.swing.JLabel UnionIcon;
@@ -576,6 +664,8 @@ public class Aplicacion extends javax.swing.JFrame {
     private javax.swing.JList historialConsultas;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPopupMenu jPopupMenu1;
