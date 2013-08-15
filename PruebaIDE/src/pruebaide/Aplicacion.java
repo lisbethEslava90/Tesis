@@ -11,6 +11,8 @@
 
 package pruebaide;
 
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
 import java.awt.Cursor;
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import interprete.Funciones;
+import javax.swing.tree.*;
 
 /**
  *
@@ -34,14 +37,17 @@ public class Aplicacion extends javax.swing.JFrame {
     private Vector<String> consultas;
     private JFileChooser archivo;
     private Funciones funciones;
-    private Resultado resultado;
+    private DefaultTreeModel modeloRelaciones;
+    private DefaultMutableTreeNode raizRelaciones;
 
     /** Creates new form VentanaSplit */
     public Aplicacion() {
         initComponents();
 
         funciones = new Funciones();
-        resultado = new Resultado(null);
+        raizRelaciones = new DefaultMutableTreeNode("Relaciones");//(DefaultMutableTreeNode) Carpetas.getModel().getRoot();
+        modeloRelaciones = new DefaultTreeModel(raizRelaciones);//(DefaultTreeModel)Carpetas.getModel();
+        Carpetas.setModel(modeloRelaciones);
         archivo = new JFileChooser("relaciones/");
         consultas = new Vector<String>();
         this.setLocationRelativeTo(null);
@@ -352,6 +358,8 @@ public class Aplicacion extends javax.swing.JFrame {
         jSplitPane2.setDividerSize(2);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Relaciones");
+        Carpetas.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane1.setViewportView(Carpetas);
 
         jSplitPane2.setTopComponent(jScrollPane1);
@@ -373,7 +381,7 @@ public class Aplicacion extends javax.swing.JFrame {
         jSplitPane1.setLeftComponent(jSplitPane2);
 
         Archivo.setText("Archivo");
-        Archivo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        Archivo.setFont(new java.awt.Font("Tahoma", 0, 12));
 
         jMenuItem1.setText("Nueva Relación");
         jMenuItem1.setName("NuevaRelacion"); // NOI18N
@@ -403,7 +411,7 @@ public class Aplicacion extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -543,7 +551,6 @@ public class Aplicacion extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(SwingUtilities.isRightMouseButton(evt)){
             jPopupMenu1.show(evt.getComponent(),evt.getX(),evt.getY());
-
         }
     }//GEN-LAST:event_historialConsultasMousePressed
 
@@ -584,20 +591,36 @@ public class Aplicacion extends javax.swing.JFrame {
     }//GEN-LAST:event_ZonaResultadoStateChanged
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
-        
+        new VentanaRelacion(this);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
-        
+        String nombreRelacion="";
         int seleccion = archivo.showOpenDialog(null);
-
+        DefaultMutableTreeNode nodos, campo;
+        Table<Integer, Integer, Object> tabla = TreeBasedTable.create();
+        
         switch(seleccion){
             case JFileChooser.CANCEL_OPTION:
                 break;
-            case JFileChooser.APPROVE_OPTION:
-                funciones.cargarArchivo(archivo.getSelectedFile());
+            case JFileChooser.APPROVE_OPTION:    
+                nombreRelacion = archivo.getSelectedFile().getName().substring(0,archivo.getSelectedFile().getName().indexOf("."));
+                //reviso si la relacion ya ha sido cargada
+                for (int i = 0; i < raizRelaciones.getChildCount(); i++) {
+                    DefaultMutableTreeNode relacion = (DefaultMutableTreeNode)raizRelaciones.getChildAt(i);
+                    if(relacion.toString().equalsIgnoreCase(nombreRelacion))
+                            return;
+                }
+                //guardo en un table lo que contiene el archivo
+                tabla = funciones.cargarArchivo(archivo.getSelectedFile());
+                nodos = new DefaultMutableTreeNode(nombreRelacion);
+                //agrego como nodos hijos de la relacion cada campo
+                for (int i = 0; i < tabla.columnKeySet().size(); i++) {
+                    campo = new DefaultMutableTreeNode(tabla.get(0, i));
+                    nodos.add(campo);
+                }
+                raizRelaciones.add(nodos);
+                modeloRelaciones.setRoot(raizRelaciones);
                 break;
             case JFileChooser.ERROR_OPTION:
                 break;

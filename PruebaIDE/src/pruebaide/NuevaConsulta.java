@@ -4,11 +4,15 @@
  */
 package pruebaide;
 
+import interprete.Interprete;
+import interprete.Principal;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -17,17 +21,20 @@ import javax.swing.*;
  */
 public class NuevaConsulta extends JPanel implements FocusListener {
 
-    private String consulta = "", nom = "";
+    private String consulta = "";
     private JTextArea areaConsulta;
     private JLabel nombre;
     private JTextField nombreConsulta;
     public JButton ejecutar, cambiarNombre;
     private Resultado resultado;
     final private Aplicacion aplicacion;
+    private interprete.Principal principal;
+    private interprete.Interprete interprete;
 
     public NuevaConsulta(int pestana, final Aplicacion aplicacion) {
 
         this.aplicacion = aplicacion;
+        interprete = new Interprete(null);
         areaConsulta = new JTextArea();
         nombre = new JLabel("Nombre:");
         nombreConsulta = new JTextField("Consulta 1");
@@ -57,13 +64,10 @@ public class NuevaConsulta extends JPanel implements FocusListener {
         nombreConsulta.addFocusListener(this);
 
         cambiarNombre.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
-
                 for (int i = 0; i < aplicacion.getListaPestana().size(); i++) {
                     if (aplicacion.getListaPestana().get(i).isVisible()) {
                         aplicacion.CambiarNombre(i, nombreConsulta.getText());
-
                         break;
                     }
                 }
@@ -71,16 +75,21 @@ public class NuevaConsulta extends JPanel implements FocusListener {
         });
 
         ejecutar.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
-                //System.out.println(""+recibirSimbolos(consulta));
+
+                System.out.println("consulta: "+areaConsulta.getText());
+                try {
+                    principal = new Principal(areaConsulta.getText());
+                    resultado.SetAreaResultado(principal.getTabla());
+                } catch (Exception ex) {
+                    Logger.getLogger(NuevaConsulta.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     //recibe el simbolo o tipo de consulta seleccionada por el usuario
     public void recibirSimbolos(String simbolo) {
-
         consulta = areaConsulta.getText() + " " + simbolo;
         areaConsulta.setText(consulta);
     }

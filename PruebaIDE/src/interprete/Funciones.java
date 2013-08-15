@@ -22,7 +22,7 @@ public class Funciones {
 
         FileInputStream archivo = null;
         try {
-            archivo = new FileInputStream(ruta+".csv");
+            archivo = new FileInputStream("relaciones/"+ruta+".csv");
             //archivo = new FileInputStream(((NodoId)nodo).getId()+".csv");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Funciones.class.getName()).log(Level.SEVERE, null, ex);

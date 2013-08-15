@@ -9,13 +9,15 @@ public class Interprete {
     private NodoBase raiz;
     Funciones funcion = new Funciones();
     Stack<Table> pila = new Stack<Table>();
+    Table<Integer, Integer, String> fin = TreeBasedTable.create();
 
     public Interprete(NodoBase root) {
         this.raiz = root;
     }
 
-    public void inicio(){
+    public Table inicio(){
         interpretarNodo(raiz);
+        return fin;
     }
 
     public void interpretarNodo(NodoBase nodo){
@@ -61,7 +63,9 @@ public class Interprete {
             }
             relacion.putAll((Table<Integer, Integer, String>)pila.pop());
             resultado = funcion.OperacionSeleccion(nodoExpresion.getPredicado(),relacion);
+            setFin(resultado);
             pila.add(resultado);
+
             ImprimirTabla(resultado);
             
         }
@@ -100,11 +104,14 @@ public class Interprete {
             relacion.putAll((Table<Integer, Integer, String>)pila.pop());
             resultado.putAll(funcion.proyeccion(relacion, listaPredicado));
             if(listaPredicadoAuxiliar.isEmpty()){
+                setFin(resultado);
                 pila.add(resultado);
             }else{
                 resultado = funcion.operacionMatematica(listaPredicadoAuxiliar, resultado);
+                setFin(resultado);
                 pila.add(resultado);
             }
+            System.out.println("FIN DESDE INTERPRETE: "+fin);
             ImprimirTabla(resultado);
         }
     }
@@ -135,6 +142,7 @@ public class Interprete {
                 relacionD.putAll((Table<Integer, Integer, String>)pila.pop());
                 resultado.putAll(funcion.union(relacionI, relacionD));
                 pila.add(resultado);
+                setFin(resultado);
                 ImprimirTabla(resultado);
            }
            if(sel.equals("INT")){
@@ -154,7 +162,7 @@ public class Interprete {
                 relacionD.putAll((Table<Integer, Integer, String>)pila.pop());
                 resultado.putAll(funcion.interseccion(relacionI, relacionD));
                 pila.add(resultado);
-
+                setFin(resultado);
                 ImprimirTabla(resultado);
            }
            if(sel.equals("PROC")){
@@ -176,7 +184,7 @@ public class Interprete {
                 relacionD.putAll((Table<Integer, Integer, String>)pila.pop());
                 resultado.putAll(funcion.productoCartesiano(relacionI, relacionD));
                 pila.add(resultado);
-
+                setFin(resultado);
                 ImprimirTabla(resultado);
            }
            if(sel.equals("DIV")){
@@ -196,7 +204,7 @@ public class Interprete {
                 relacionD.putAll((Table<Integer, Integer, String>)pila.pop());
                 resultado.putAll(funcion.division(relacionI, relacionD));
                 pila.add(resultado);
-
+                setFin(resultado);
                 ImprimirTabla(resultado);
            }
            if(sel.equals("DIF")){
@@ -216,7 +224,7 @@ public class Interprete {
                 relacionD.putAll((Table<Integer, Integer, String>)pila.pop());
                 resultado.putAll(funcion.diferencia(relacionI, relacionD));
                 pila.add(resultado);
-
+                setFin(resultado);
                 ImprimirTabla(resultado);
            }
            if(sel.equals("REUN")){
@@ -236,15 +244,22 @@ public class Interprete {
                 relacionD.putAll((Table<Integer, Integer, String>)pila.pop());
                 resultado.putAll(funcion.reunionNatural(relacionI, relacionD));
                 pila.add(resultado);
-
+                setFin(resultado);
                 ImprimirTabla(resultado);
            }
     }
 
     private void ImprimirTabla(Table tabla){
         for(int i=0; i<tabla.rowKeySet().size(); i++){
-            System.out.println(i+" "+tabla.rowMap().get(i));
+            for(int j=0; j<tabla.columnKeySet().size(); j++){
+                System.out.print(tabla.get(i, j)+" ");
+            }
+            System.out.println("");
         }
+    }
+
+    public void setFin(Table tabla){
+        this.fin = tabla;
     }
 
 }
