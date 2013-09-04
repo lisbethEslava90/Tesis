@@ -1,1 +1,1 @@
-SEL relacionD.Num_Dept > relacionI.Num_Dept-1 (Departamento PROC Localizaciones_Dept)
+PRO nombre_cliente,otro (cliente)

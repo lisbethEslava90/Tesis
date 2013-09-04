@@ -8,11 +8,12 @@ import nodos.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.swing.JOptionPane;
 
 
 public class Funciones {
 
-    Stack<Table> pila = new Stack<Table>();
+    private Stack<Table> pila = new Stack<Table>();
 
     public Table cargarArchivo(String ruta){
 
@@ -25,7 +26,7 @@ public class Funciones {
             archivo = new FileInputStream("relaciones/"+ruta+".csv");
             //archivo = new FileInputStream(((NodoId)nodo).getId()+".csv");
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Funciones.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "No existe la relacion "+ruta+".csv");
         }
         DataInputStream entrada = new DataInputStream(archivo);
         BufferedReader buffer = new BufferedReader(new InputStreamReader(entrada));
@@ -68,7 +69,7 @@ public class Funciones {
         try {
             fr = new FileReader(F);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Funciones.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "No existe la relacion "+F.getAbsolutePath());
         }
         BufferedReader br = new BufferedReader(fr);
         try {
@@ -155,7 +156,7 @@ public class Funciones {
                 return nuevaRelacion;
 
         }else
-            System.out.println("Dominios incompatibles");
+            JOptionPane.showMessageDialog(null, "Proyección: No se encontraron todos los campos");
         return auxiliar;
     }
 
@@ -171,7 +172,7 @@ public class Funciones {
                 if(tabla.get(0, i).equals(campo))
                     buscarEn = i;
             }
-            //busco la condicion de mayor
+            //busco la condicion de menor
             for(int i=1; i<tabla.rowKeySet().size(); i++){
                 try {
                     if (formateador.parse(tabla.get(i, buscarEn).toString()).before(fecha)) {
@@ -195,7 +196,7 @@ public class Funciones {
                 if(tabla.get(0, i).equals(campo))
                     buscarEn = i;
             }
-            //busco la condicion que sea menor
+            //busco la condicion que sea mayor
             for(int i=1; i<tabla.rowKeySet().size(); i++){
                 try {
                     if (fecha.before(formateador.parse(tabla.get(i, buscarEn).toString()))) {
@@ -243,7 +244,7 @@ public class Funciones {
                 if(tabla.get(0, i).equals(campo))
                     buscarEn = i;
             }
-            //busco la condicion que sea mayorIgual
+            //busco la condicion que sea menorIgual
             for(int i=1; i<tabla.rowKeySet().size(); i++){
                 try {
                     if (formateador.parse(tabla.get(i, buscarEn).toString()).before(fecha) || formateador.parse(tabla.get(i, buscarEn).toString()).equals(fecha)) {
@@ -267,7 +268,7 @@ public class Funciones {
                 if(tabla.get(0, i).equals(campo))
                     buscarEn = i;
             }
-            //busco la condicion que sea menor
+            //busco la condicion que sea mayorIgual
             for(int i=1; i<tabla.rowKeySet().size(); i++){
                 try {
                     if (fecha.before(formateador.parse(tabla.get(i, buscarEn).toString())) || formateador.parse(tabla.get(i, buscarEn).toString()).equals(fecha)) {
@@ -363,7 +364,6 @@ public class Funciones {
                 }
             }
         }else if(tipo == tipo.mayor){
-            System.out.println("mayor");
             if(cuentoColumnas==2){
                 for(int i=1; i<tabla.rowKeySet().size(); i++){
                     if(Double.parseDouble(tabla.get(i, columnaCampo).toString())>Double.parseDouble(tabla.get(i, columnaCondicion).toString())){
@@ -413,7 +413,7 @@ public class Funciones {
                     if(tabla.get(0, i).equals(campo))
                         buscarEn = i;
                 }
-                //busco la condicion que sea mayor
+                //busco la condicion que sea mayorIgual
                 for(int i=1; i<tabla.rowKeySet().size(); i++){
                     if(Double.parseDouble(tabla.get(i, buscarEn).toString())>=Double.parseDouble(condicion)){
                         conseguiEn = i;
@@ -445,7 +445,7 @@ public class Funciones {
                     if(tabla.get(0, i).equals(campo))
                         buscarEn = i;
                 }
-                //busco la condicion que sea mayor
+                //busco la condicion que sea menor
                 for(int i=1; i<tabla.rowKeySet().size(); i++){
                     if(Double.parseDouble(tabla.get(i, buscarEn).toString())<Double.parseDouble(condicion)){
                         conseguiEn = i;
@@ -477,7 +477,7 @@ public class Funciones {
                     if(tabla.get(0, i).equals(campo))
                         buscarEn = i;
                 }
-                //busco la condicion que sea mayor
+                //busco la condicion que sea menorIgual
                 for(int i=1; i<tabla.rowKeySet().size(); i++){
                     if(Double.parseDouble(tabla.get(i, buscarEn).toString())<=Double.parseDouble(condicion)){
                         conseguiEn = i;
@@ -509,7 +509,7 @@ public class Funciones {
                     if(tabla.get(0, i).equals(campo))
                         buscarEn = i;
                 }
-                //busco la condicion de igualdad
+                //busco la condicion de desigualdad
                 for(int i=1; i<tabla.rowKeySet().size(); i++){
                     if(tabla.get(i, buscarEn).equals(condicion)==false){
                         conseguiEn = i;
@@ -542,9 +542,7 @@ public class Funciones {
                     contador++;
                 }
             }
-        }else
-            System.out.println("Diferente cantidad de columnas");
-
+        }
         if(contador==relacionI.columnKeySet().size()){
             //asigno a nuevarelacion todas las filas de la relacionI
             nuevaRelacion.putAll(relacionI);
@@ -587,7 +585,7 @@ public class Funciones {
                 band=true;
             }
         }else
-                System.out.println("Dominios diferentes");
+            JOptionPane.showMessageDialog(null, "Union: Los campos de las relaciones no coinciden ");
         return auxiliar;
     }
 
@@ -606,8 +604,7 @@ public class Funciones {
                     Contador++;
                 }
             }
-        }else
-            System.out.println("Diferente cantidad de columnas");
+        }
 
         if(Contador==copia.columnKeySet().size()){
             for(int i=0; i<copia.columnKeySet().size(); i++){
@@ -650,7 +647,7 @@ public class Funciones {
 
             //System.out.println("nueva relacion diferencia: "+nuevaRelacion.cellSet());
         }else
-            System.out.println("Dominios diferentes");
+            JOptionPane.showMessageDialog(null, "Diferencia: Diferente cantidad de columnas ");
         return nuevaRelacion;
     }
 
@@ -669,41 +666,45 @@ public class Funciones {
                 }
             }
         }
-        //deben coincidir en una columna
-            //colocar a la nueva relacion el identificador de cada columna
-        for(int j=0; j<relacionI.columnKeySet().size(); j++){
-            nuevaRelacion.put(0, j, relacionI.get(0, j));
-            columnas = j;
-        }
-        columnas++;
-        for(int j=0; j<relacionD.columnKeySet().size(); j++){
-            nuevaRelacion.put(0, columnas, relacionD.get(0, j));
-            columnas++;
-        }
-        //colocarle el nombre de tabla en las columnas q coinciden
-        nuevaRelacion.put(0, coincideRI, "relacionI."+relacionI.get(0, coincideRI));
-        nuevaRelacion.put(0, coincideRD+relacionI.columnKeySet().size(), "relacionD."+relacionD.get(0, coincideRD));
-
-        int j=0, filaRD=1;
-
-        for(int h=0; h<relacionI.rowMap().size()-1; h++){
-            //para cada fila de la relacionI corresponde todas las filas de la relacionD
-            for(int i=1; i<relacionD.rowKeySet().size();i++){
-                //agregar a la nueva relacion cada fila de la relacionI
-                for(j=0; j<relacionI.columnKeySet().size(); j++){
-                    nuevaRelacion.put(filaNR, j, relacionI.get(filaRI, j));
-                }
-                //agregar a la nueva relacion cada fila de la relacionD
-                for(int k=0; k<relacionD.columnKeySet().size();k++){
-                    nuevaRelacion.put(filaNR, j, relacionD.get(filaRD, k));
-                    j++;
-                }
-                filaRD++;
-                filaNR++;
+        if(columnasIguales>0){
+            //deben coincidir en una columna
+                //colocar a la nueva relacion el identificador de cada columna
+            for(int j=0; j<relacionI.columnKeySet().size(); j++){
+                nuevaRelacion.put(0, j, relacionI.get(0, j));
+                columnas = j;
             }
-            filaRI++;
-            filaRD = 1;
-        }
+            columnas++;
+            for(int j=0; j<relacionD.columnKeySet().size(); j++){
+                nuevaRelacion.put(0, columnas, relacionD.get(0, j));
+                columnas++;
+            }
+            //colocarle el nombre de tabla en las columnas q coinciden
+            nuevaRelacion.put(0, coincideRI, "relacionI."+relacionI.get(0, coincideRI));
+            nuevaRelacion.put(0, coincideRD+relacionI.columnKeySet().size(), "relacionD."+relacionD.get(0, coincideRD));
+
+            int j=0, filaRD=1;
+
+            for(int h=0; h<relacionI.rowMap().size()-1; h++){
+                //para cada fila de la relacionI corresponde todas las filas de la relacionD
+                for(int i=1; i<relacionD.rowKeySet().size();i++){
+                    //agregar a la nueva relacion cada fila de la relacionI
+                    for(j=0; j<relacionI.columnKeySet().size(); j++){
+                        nuevaRelacion.put(filaNR, j, relacionI.get(filaRI, j));
+                    }
+                    //agregar a la nueva relacion cada fila de la relacionD
+                    for(int k=0; k<relacionD.columnKeySet().size();k++){
+                        nuevaRelacion.put(filaNR, j, relacionD.get(filaRD, k));
+                        j++;
+                    }
+                    filaRD++;
+                    filaNR++;
+                }
+                filaRI++;
+                filaRD = 1;
+            }
+        }else
+            JOptionPane.showMessageDialog(null, "Producto Cartesiano: las relaciones no coinciden en ningun campo ");
+
         return nuevaRelacion;
     }
 
@@ -714,8 +715,6 @@ public class Funciones {
 
         auxiliar.putAll(diferencia(relacionI, relacionD));
         nuevaRelacion.putAll(diferencia(relacionI, auxiliar));
-        System.out.println("interseccion: "+nuevaRelacion.cellSet());
-
         return nuevaRelacion;
     }
 
@@ -727,6 +726,7 @@ public class Funciones {
         int iguales=0, igualA=0, igualB=0, k=0;
         String [] nombre;
         String campoA="", campoB="";
+        boolean band=false;
 
         productoCartesiano = productoCartesiano(relacionI, relacionD);
         //seleccion = seleccion(productoCartesiano, "relacionI."+productoCartesiano.get(0, 1), "relacionD."+productoCartesiano.get(0, 2));
@@ -743,14 +743,14 @@ public class Funciones {
                 }
             }
         }
-        System.out.println("campoA: "+campoA+" CampoB: "+campoB);
-        seleccion = seleccion(productoCartesiano, "relacionI."+campoA, "relacionD."+campoB,tipoOp.igual); //OJO MODIFICADO, AGREGO NULL
+        seleccion = seleccion(productoCartesiano, "relacionI."+campoA, "relacionD."+campoB,tipoOp.igual);
 
         //busco que columnas son iguales
         for(int i=0; i<seleccion.columnKeySet().size();i++){
             for(int j=0; j<seleccion.columnKeySet().size(); j++){
                 if(seleccion.get(1, i).equals(seleccion.get(1, j))){
                     iguales++;
+                    band = true;
                     if(iguales==2&&(i!=j)){
                         igualA = i;
                         igualB = j;
@@ -759,25 +759,24 @@ public class Funciones {
             }
         iguales=0;
         }
-        //guardo en nuevaRelacion los valores sin la columna repetida que resulta del producto cartesiano
-        for(int i=0; i<seleccion.rowKeySet().size(); i++){
-            for(int j=0; j<seleccion.columnKeySet().size()-1; j++){
-                if(j==igualB){
-                    k = igualB+1;
-                    nuevaRelacion.put(i, j, seleccion.get(i,k));
-                    k++;
-                }
-                if(j<igualB){
-                    nuevaRelacion.put(i, j, seleccion.get(i, j));
-                }
-                if(j>igualB){
-                    nuevaRelacion.put(i, j, seleccion.get(i,k));
-                    k++;
+            //guardo en nuevaRelacion los valores sin la columna repetida que resulta del producto cartesiano
+            for(int i=0; i<seleccion.rowKeySet().size(); i++){
+                for(int j=0; j<seleccion.columnKeySet().size()-1; j++){
+                    if(j==igualB){
+                        k = igualB+1;
+                        nuevaRelacion.put(i, j, seleccion.get(i,k));
+                        k++;
+                    }
+                    if(j<igualB){
+                        nuevaRelacion.put(i, j, seleccion.get(i, j));
+                    }
+                    if(j>igualB){
+                        nuevaRelacion.put(i, j, seleccion.get(i,k));
+                        k++;
+                    }
                 }
             }
-        }
-        
-        nuevaRelacion.put(0, igualA, campoA); //si falla eliminar esta línea
+            nuevaRelacion.put(0, igualA, campoA); //si falla eliminar esta línea
         return nuevaRelacion;
     }
 
@@ -790,7 +789,7 @@ public class Funciones {
         Table<Integer, Integer, Object> T1 = TreeBasedTable.create();
         Table<Integer, Integer, Object> T2 = TreeBasedTable.create();
         List<String> lista = new ArrayList<String>();
-        int columnasIguales=0, coincideRI=0, coincideRD=0;
+        int coincideRI=0, coincideRD=0;
         String valor="";
         String [] nombre;
 
@@ -823,38 +822,23 @@ public class Funciones {
             else if(nombre.length==1)
                 producto.put(0, j, nombre[0]);
         }
-
-        //System.out.println("T1 PROC S: "+producto.cellSet());
         diferencia = diferencia(producto, relacionI);
-        //System.out.println("diferencia: "+diferencia.cellSet());
         T2 = proyeccion(diferencia, lista);
-        //System.out.println("T2: "+T2.cellSet());
         nuevaRelacion = diferencia(T1, T2);
-        //System.out.println("T: "+nuevaRelacion.cellSet());
         return nuevaRelacion;
     }
 
     public Table OperacionSeleccion(NodoBase predicado, Table relacion){
         Table<Integer, Integer, Object> nuevaRelacion = TreeBasedTable.create();
         
-        System.out.println("-------------Predicado de la seleccion---------------");
         while(predicado != null){
             if(predicado instanceof NodoComparacion){
                 nuevaRelacion = miniArbol((NodoComparacion)predicado,relacion);
-            }else if(predicado instanceof NodoFecha){
-              //  System.out.println("Fecha: "+((NodoFecha)predicado).getFecha());
-            }else if(predicado instanceof NodoId){
-                //System.out.println("ID: "+((NodoId)predicado).getId());
-            }else if(predicado instanceof NodoNumero){
-                //System.out.println("NUM: "+((NodoNumero)predicado).getNumero());
             }else if(predicado instanceof NodoOperadorLogico){
-                System.out.println("el predicado es un operador logico");
                 nuevaRelacion = miniArbol((NodoOperadorLogico)predicado,relacion);
             }
-
             predicado = predicado.getHermanoDerecha();
         }
-        System.out.println("---------Fin del predicado--------");
         return nuevaRelacion;
     }
 
@@ -874,7 +858,6 @@ public class Funciones {
             tipoOp sel = ((NodoComparacion) raiz).getOperacion();
 
                 if (sel == tipoOp.diferente){
-                    System.out.println("!=");
                     izq = ((NodoId)((NodoComparacion)raiz).getOpIzquierdo()).getId();
                     if(((NodoComparacion)raiz).getOpDerecho() instanceof NodoId){
                         der = ((NodoId)((NodoComparacion)raiz).getOpDerecho()).getId();
@@ -899,7 +882,6 @@ public class Funciones {
                     }
                 }
                 if (sel == tipoOp.igual){
-                    System.out.println("=");
                     izq = ((NodoId)((NodoComparacion)raiz).getOpIzquierdo()).getId();
                     if(((NodoComparacion)raiz).getOpDerecho() instanceof NodoId){
                         der = ((NodoId)((NodoComparacion)raiz).getOpDerecho()).getId();
@@ -924,7 +906,6 @@ public class Funciones {
                     }
                 }
                 if (sel == tipoOp.mayor){
-                    System.out.println(">");
                     izq = ((NodoId)((NodoComparacion)raiz).getOpIzquierdo()).getId();
                     if(((NodoComparacion)raiz).getOpDerecho() instanceof NodoNumero){
                         der = ((NodoNumero)((NodoComparacion)raiz).getOpDerecho()).getNumero().toString();
@@ -949,7 +930,6 @@ public class Funciones {
                     }
                 }
                 if (sel == tipoOp.mayorIgual){
-                    System.out.println(">=");
                     izq = ((NodoId)((NodoComparacion)raiz).getOpIzquierdo()).getId();
                     if(((NodoComparacion)raiz).getOpDerecho() instanceof NodoNumero){
                         der = ((NodoNumero)((NodoComparacion)raiz).getOpDerecho()).getNumero().toString();
@@ -974,7 +954,6 @@ public class Funciones {
                     }
                 }
                 if (sel == tipoOp.menor){
-                    System.out.println("<");
                     izq = ((NodoId)((NodoComparacion)raiz).getOpIzquierdo()).getId();
                     if(((NodoComparacion)raiz).getOpDerecho() instanceof NodoNumero){
                         der = ((NodoNumero)((NodoComparacion)raiz).getOpDerecho()).getNumero().toString();
@@ -999,7 +978,6 @@ public class Funciones {
                     }
                 }
                 if (sel == tipoOp.menorIgual){
-                    System.out.println("<=");
                     izq = ((NodoId)((NodoComparacion)raiz).getOpIzquierdo()).getId();
                     if(((NodoComparacion)raiz).getOpDerecho() instanceof NodoNumero){
                         der = ((NodoNumero)((NodoComparacion)raiz).getOpDerecho()).getNumero().toString();
@@ -1023,19 +1001,14 @@ public class Funciones {
                         nuevaRelacion = seleccion(relacion, izq, fecha, tipoOp.menorIgual);
                     }
                 }
-            //miniArbol(((NodoComparacion)raiz).getOpIzquierdo(),relacion);
-            //miniArbol(((NodoComparacion)raiz).getOpDerecho(),relacion);
         }else if(raiz instanceof NodoId){
                String sino = (((NodoId) raiz).getSinonimo()!=null)?((NodoId) raiz).getSinonimo():"";
                //System.out.println("ID:"+((NodoId) raiz).getId()+""+sino);
-        }else if(raiz instanceof  NodoNumero){
-            //System.out.println("NUM = "+ ((NodoNumero) raiz).getNumero());
         }else if(raiz instanceof NodoOperadorLogico){
 
             tipoOp sel = ((NodoOperadorLogico) raiz).getOperacion();
 
                 if (sel == tipoOp.and){
-                    System.out.println("AND");
                     if(((NodoOperadorLogico)raiz).getOpeI() instanceof NodoComparacion){
                         pila.add(miniArbol(((NodoOperadorLogico)raiz).getOpeI(), relacion));
                     }else
@@ -1050,10 +1023,8 @@ public class Funciones {
                     relacionD = (Table<Integer, Integer, Object>)pila.pop();
                     pila.add(relacionD);
                     nuevaRelacion = pila.pop();
-                    System.out.println("resultado: "+relacionD);
                 }
                 if (sel == tipoOp.or){
-                    System.out.println("OR");
                     if(((NodoOperadorLogico)raiz).getOpeI() instanceof NodoComparacion){
                         pila.add(miniArbol(((NodoOperadorLogico)raiz).getOpeI(), relacion));
                     }else
@@ -1066,15 +1037,11 @@ public class Funciones {
                     }else
                         OperacionSeleccion(((NodoOperadorLogico)raiz).getOpeD(), relacion);
                     relacionD = (Table<Integer, Integer, Object>)pila.pop();
-                    System.out.println("relacionI: "+relacionI);
-                    System.out.println("relacionD: "+relacionD);
                     tablaAuxiliar = union(relacionI, relacionD);
                     pila.add(tablaAuxiliar);
                     nuevaRelacion = pila.pop();
-                    System.out.println("resultado: "+tablaAuxiliar);
                 }
                 if (sel == tipoOp.not){
-                    System.out.println("NOT");
 
                     if(((NodoOperadorLogico)raiz).getOpeD() instanceof NodoComparacion){
                         pila.add(miniArbol(((NodoOperadorLogico)raiz).getOpeD(), relacion));
@@ -1082,12 +1049,9 @@ public class Funciones {
                         OperacionSeleccion(((NodoOperadorLogico)raiz).getOpeD(), relacion);
                     
                     relacionD = (Table<Integer, Integer, Object>)pila.pop();
-
-                    System.out.println("relacionD: "+relacionD);
                     tablaAuxiliar = diferencia(relacion, relacionD);
                     pila.add(tablaAuxiliar);
                     nuevaRelacion = pila.pop();
-                    System.out.println("resultado: "+tablaAuxiliar);
                 }
         }
         return nuevaRelacion;

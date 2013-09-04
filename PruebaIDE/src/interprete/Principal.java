@@ -22,30 +22,11 @@ public class Principal {
         parser parser_obj = new parser(new Scanner(consulta,sf),sf);
         parser_obj.parse();
         NodoBase raiz =  parser_obj.action_obj.getRaiz();
-	Util.imprimirArbol(raiz);
+	//Util.imprimirArbol(raiz);//Llamada a la clase util para imprimir el arbol
         tabla = new Interprete(raiz).inicio();
     }
 
     public Table getTabla() {
         return tabla;
     }
-
-//    public static void main(String args[]) throws Exception {
-//
-//		//TinySymbolFactory sf = new TinySymbolFactory();
-//		SymbolFactory sf = new DefaultSymbolFactory();
-//		/*if (args .length==0)
-//			new parser(new Scanner(System.in,sf),sf).parse();
-//		else
-//			new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf).parse();
-//		*/
-//
-//		parser parser_obj = new parser(new Scanner("",sf),sf);
-//		parser_obj.parse();
-//
-//		NodoBase raiz =  parser_obj.action_obj.getRaiz();
-//		Util.imprimirArbol(raiz);
-//                new Interprete(raiz).inicio();
-//	}
-
 }

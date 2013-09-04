@@ -38,91 +38,91 @@ nuevalinea		= \n | \n\r | \r\n
 espacio			= [ \t]+
 
 %%
-"SEL"           { if(debug) System.out.println("token SEL");
+"SEL"           { if(debug) 
 			return sf.newSymbol("SEL",sym.SEL);
 			}
-"PRO"           { if(debug) System.out.println("token PRO");
+"PRO"           { if(debug) 
 			return sf.newSymbol("PRO",sym.PRO);
 			}
-"UNI"           { if(debug) System.out.println("token UNI");
+"UNI"           { if(debug) 
 			return sf.newSymbol("UNI",sym.UNI);
 			}
-"DIF"           { if(debug) System.out.println("token DIF");
+"DIF"           { if(debug) 
 			return sf.newSymbol("DIF",sym.DIF);
 			}
-"PROC"          { if(debug) System.out.println("token PROC");
+"PROC"          { if(debug) 
 			return sf.newSymbol("PROC",sym.PROC);
 			}
-"INT"           { if(debug) System.out.println("token INT");
+"INT"           { if(debug) 
 			return sf.newSymbol("INT",sym.INT);
 			}
-"DIV"           { if(debug) System.out.println("token DIV");
+"DIV"           { if(debug) 
 			return sf.newSymbol("DIV",sym.DIV);
 			}
-"REUN"          { if(debug)System.out.println("token REUN");
+"REUN"          { if(debug)
 			return sf.newSymbol("REUN",sym.REUN);
 			}
-"AND"             { if(debug) System.out.println("token AND");
+"AND"             { if(debug) 
 			return sf.newSymbol("AND",sym.AND);
 			}						
-"NOT"             { if(debug) System.out.println("token NOT");
+"NOT"             { if(debug) 
 			return sf.newSymbol("NOT",sym.NOT);
 			}						
-"OR"             { if(debug) System.out.println("token OR");
+"OR"             { if(debug) 
 			return sf.newSymbol("OR",sym.OR);
 			}						
-"="             { if(debug) System.out.println("token EQ");
+"="             { if(debug) 
 			return sf.newSymbol("EQ",sym.EQ);
 			}	
-"!="             { if(debug) System.out.println("token DIFERENTE");
+"!="             { if(debug) 
 			return sf.newSymbol("DIFERENTE",sym.DIFERENTE);
 			}			
-">"             { if(debug) System.out.println("token MAYOR");
+">"             { if(debug) 
 			return sf.newSymbol("MAYOR",sym.MAYOR);
 			}	
-">="             { if(debug) System.out.println("token MAYOR EQ");
+">="             { if(debug) 
 			return sf.newSymbol("MAYOREQ",sym.MAYOREQ);
 			}	
-"<"             { if(debug) System.out.println("token MENOR");
+"<"             { if(debug) 
 			return sf.newSymbol("MENOR",sym.MENOR);
 			}	
-"<="             { if(debug) System.out.println("token MENOREQ");
+"<="             { if(debug) 
 			return sf.newSymbol("MENOREQ",sym.MENOREQ);
 			}			
-"("             {	if(debug) System.out.println("token IPAREN");
+"("             {	if(debug) 
 			return sf.newSymbol("IPAREN",sym.IPAREN);
 			}
-")"             {	if(debug) System.out.println("token DPAREN");
+")"             {	if(debug) 
 			return sf.newSymbol("DPAREN",sym.DPAREN);
 			}
-","             {	if(debug) System.out.println("token COMA");
+","             {	if(debug) 
 			return sf.newSymbol("COMA",sym.COMA);
 			}
-"\""			{	if(debug) System.out.println("token COMILLAS");
+"\""			{	if(debug) 
 				return sf.newSymbol("COMI",sym.COMI);
 			}
-"+"			{	if(debug) System.out.println("token SUMA");
+"+"			{	if(debug) 
 				return sf.newSymbol("SUMA",sym.SUMA);
 			}			
-"-"			{	if(debug) System.out.println("token RESTA");
+"-"			{	if(debug) 
 				return sf.newSymbol("RESTA",sym.RESTA);
 			}			
-"*"			{	if(debug) System.out.println("token MULTIPLICACION");
+"*"			{	if(debug) 
 				return sf.newSymbol("MULTI",sym.MULTI);
 			}			
-"/"			{	if(debug) System.out.println("token DIVISION");
+"/"			{	if(debug) 
 				return sf.newSymbol("DIVI",sym.DIVI);
 			}			
-{numero}        {	if(debug) System.out.println("token NUM");
+{numero}        {	if(debug) 
 			return sf.newSymbol("NUM",sym.NUM,new Integer(yytext()));
 			}
-{identificador}	{	if(debug) System.out.println("token ID");
+{identificador}	{	if(debug) 
 				return sf.newSymbol("ID",sym.ID,new String(yytext()));
 			}
-{fecha}			{	if(debug) System.out.println("token FECHA");
+{fecha}			{	if(debug) 
 				return sf.newSymbol("FECHA",sym.FECHA,new String(yytext()));
 			}	
-{nuevalinea}	{	/*if(debug) System.out.println(" ");
+{nuevalinea}	{	/*if(debug) 
 			return sf.newSymbol("NUEVA", sym.NUEVA);*/
 			}			
 {espacio}    	{ /* saltos espacios en blanco*/}

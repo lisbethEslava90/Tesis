@@ -44,6 +44,7 @@ public class VentanaRelacion extends JDialog implements FocusListener {
     private DefaultTableModel modelo;
     private File archivo;
     private int fila = -1, columna = -1;
+    private boolean bandera = false;
 
     public VentanaRelacion(JFrame parent) {
         super(parent, true);
@@ -58,7 +59,7 @@ public class VentanaRelacion extends JDialog implements FocusListener {
         panelIzq = new JPanel();
         panelDer = new JPanel();
         panelInferior = new JPanel();
-        scroll = new JScrollPane();      
+        scroll = new JScrollPane(tabla);
         AgregarColumna = new JButton("Agregar Columna");
         EliminarColumna = new JButton("Eliminar Columna");
         InsertarFila = new JButton("Insertar Fila");
@@ -73,7 +74,6 @@ public class VentanaRelacion extends JDialog implements FocusListener {
         cancelar.setBounds(365, 10, 90, 30);
 
         nombreRelacion.addFocusListener(this);
-        scroll.setViewportView(tabla);
 
         panel.setLayout(null);
         panelIzq.setLayout(null);
@@ -185,6 +185,7 @@ public class VentanaRelacion extends JDialog implements FocusListener {
                     Logger.getLogger(VentanaRelacion.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 salida.close();
+                bandera = true;
                 VentanaRelacion.this.dispose();
             }
         });
@@ -204,6 +205,7 @@ public class VentanaRelacion extends JDialog implements FocusListener {
         panelDer.setBorder(BorderFactory.createEtchedBorder());
 
         tabla.setBounds(5, 5, 320, 300);
+        
         tabla.setBorder(BorderFactory.createLineBorder(Color.BLACK));        
         panelDer.add(tabla);
         //panelDer.add(scroll);
@@ -250,4 +252,13 @@ public class VentanaRelacion extends JDialog implements FocusListener {
         }
         return tmp;
     }
+
+    public boolean relacionCreada(){
+        return bandera;
+    }
+
+    public String getNombreRelacion() {
+        return nombreRelacion.getText();
+    }
+    
 }

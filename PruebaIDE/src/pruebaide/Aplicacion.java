@@ -8,7 +8,6 @@
  *
  * Created on 19-abr-2013, 13:28:49
  */
-
 package pruebaide;
 
 import com.google.common.collect.Table;
@@ -21,6 +20,10 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import interprete.Funciones;
+import java.awt.Image;
+import java.awt.Toolkit;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.tree.*;
 
 /**
@@ -39,6 +42,9 @@ public class Aplicacion extends javax.swing.JFrame {
     private Funciones funciones;
     private DefaultTreeModel modeloRelaciones;
     private DefaultMutableTreeNode raizRelaciones;
+    private String nombreSeleccionado = "";
+    private boolean seleccionCarpeta = false;
+    private Icon CLOSE_ICON_TAB = new ImageIcon("closeTabButton.png");
 
     /** Creates new form VentanaSplit */
     public Aplicacion() {
@@ -53,14 +59,17 @@ public class Aplicacion extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         pestana = new NuevaConsulta(contPestanas, this);
         ListaPestana = new ArrayList<NuevaConsulta>();
-        ListaPestana.add(new NuevaConsulta(contPestanas,this));
+        ListaPestana.add(new NuevaConsulta(contPestanas, this));
         ListaResultado = new ArrayList<Resultado>();
-        this.ZonaConsulta.addTab("Consulta 1", ListaPestana.get(0)); //add(pestana);
+        //this.ZonaConsulta.addTab("Consulta 1", ListaPestana.get(0)); //add(pestana);
+        
         Resultado auxiliar = ListaPestana.get(0).getResultado();
         ListaResultado.add(auxiliar);
-        ZonaResultado.addTab(auxiliar.getNombre(),auxiliar);
+        ZonaResultado.addTab(auxiliar.getNombre(), auxiliar);
+        CerrarPestana pestanaClosed = new CerrarPestana(ZonaConsulta, ListaPestana.get(0), "Consulta "+contPestanas, CLOSE_ICON_TAB, contPestanas,ZonaResultado);
+
         this.jSplitPane1.setDividerLocation(0.25);
-     //   this.jSplitPane2.setDividerLocation(0.4);
+        //   this.jSplitPane2.setDividerLocation(0.4);
         this.jSplitPane3.setDividerLocation(0.7);
         consultas.add("Consulta 1");
         historialConsultas.setListData(consultas);
@@ -69,12 +78,13 @@ public class Aplicacion extends javax.swing.JFrame {
 
             @Override
             public boolean accept(File f) {
-                if(f.isDirectory()){
+                if (f.isDirectory()) {
                     return true;
-                }else{
+                } else {
                     return f.getName().toLowerCase().endsWith(".csv");
                 }
             }
+
             @Override
             public String getDescription() {
                 return "Archivos .csv";
@@ -82,9 +92,9 @@ public class Aplicacion extends javax.swing.JFrame {
         });
     }
 
-    public void CambiarNombre(int indice, String texto){
+    public void CambiarNombre(int indice, String texto) {
         ZonaConsulta.setTitleAt(indice, texto);
-        ZonaResultado.setTitleAt(indice, "Resultado de: "+texto);
+        ZonaResultado.setTitleAt(indice, "Resultado de: " + texto);
         consultas.set(indice, texto);
         historialConsultas.setListData(consultas);
     }
@@ -92,6 +102,7 @@ public class Aplicacion extends javax.swing.JFrame {
     public ArrayList<NuevaConsulta> getListaPestana() {
         return ListaPestana;
     }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -103,6 +114,8 @@ public class Aplicacion extends javax.swing.JFrame {
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
         ConsultaNueva = new javax.swing.JMenuItem();
+        jPopupMenu2 = new javax.swing.JPopupMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -115,6 +128,7 @@ public class Aplicacion extends javax.swing.JFrame {
         DiferenciaIcon = new javax.swing.JLabel();
         DivisionIcon = new javax.swing.JLabel();
         ReunionIcon = new javax.swing.JLabel();
+        nuevaConsulta = new javax.swing.JButton();
         jSplitPane3 = new javax.swing.JSplitPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         ZonaConsulta = new javax.swing.JTabbedPane();
@@ -127,8 +141,10 @@ public class Aplicacion extends javax.swing.JFrame {
         historialConsultas = new javax.swing.JList();
         jMenuBar1 = new javax.swing.JMenuBar();
         Archivo = new javax.swing.JMenu();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         ConsultaNueva.setText("Nueva Consulta");
@@ -139,7 +155,17 @@ public class Aplicacion extends javax.swing.JFrame {
         });
         jPopupMenu1.add(ConsultaNueva);
 
+        jMenuItem3.setText("jMenuItem3");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jPopupMenu2.add(jMenuItem3);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Álgebra Relacional");
+        setIconImage(getIconImage());
         setResizable(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -276,6 +302,13 @@ public class Aplicacion extends javax.swing.JFrame {
             }
         });
 
+        nuevaConsulta.setText("Nueva Consulta");
+        nuevaConsulta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevaConsultaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PanelIconosLayout = new javax.swing.GroupLayout(PanelIconos);
         PanelIconos.setLayout(PanelIconosLayout);
         PanelIconosLayout.setHorizontalGroup(
@@ -297,20 +330,25 @@ public class Aplicacion extends javax.swing.JFrame {
                 .addComponent(DivisionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(ReunionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(261, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(nuevaConsulta)
+                .addContainerGap(193, Short.MAX_VALUE))
         );
         PanelIconosLayout.setVerticalGroup(
             PanelIconosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelIconosLayout.createSequentialGroup()
-                .addGroup(PanelIconosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(DivisionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ReunionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DiferenciaIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(InterseccionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ProductoIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(UnionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ProyeccionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(SeleccionIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(PanelIconosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(PanelIconosLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(nuevaConsulta, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
+                    .addComponent(DivisionIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ReunionIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DiferenciaIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(InterseccionIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ProductoIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(UnionIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ProyeccionIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(SeleccionIcon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -341,7 +379,7 @@ public class Aplicacion extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
+            .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
             .addComponent(PanelIconos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
@@ -360,6 +398,11 @@ public class Aplicacion extends javax.swing.JFrame {
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Relaciones");
         Carpetas.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        Carpetas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CarpetasMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(Carpetas);
 
         jSplitPane2.setTopComponent(jScrollPane1);
@@ -370,6 +413,9 @@ public class Aplicacion extends javax.swing.JFrame {
             public Object getElementAt(int i) { return strings[i]; }
         });
         historialConsultas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                historialConsultasMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 historialConsultasMousePressed(evt);
             }
@@ -383,6 +429,18 @@ public class Aplicacion extends javax.swing.JFrame {
         Archivo.setText("Archivo");
         Archivo.setFont(new java.awt.Font("Tahoma", 0, 12));
 
+        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/1377571595_document-new.png"))); // NOI18N
+        jMenuItem4.setText("Nueva Consulta");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        Archivo.add(jMenuItem4);
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/1377571484_table_add.png"))); // NOI18N
         jMenuItem1.setText("Nueva Relación");
         jMenuItem1.setName("NuevaRelacion"); // NOI18N
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -392,6 +450,7 @@ public class Aplicacion extends javax.swing.JFrame {
         });
         Archivo.add(jMenuItem1);
 
+        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/table-go.png"))); // NOI18N
         jMenuItem2.setText("Cargar Relación");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -399,6 +458,15 @@ public class Aplicacion extends javax.swing.JFrame {
             }
         });
         Archivo.add(jMenuItem2);
+
+        jMenuItem5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/1377571722_Log Out.png"))); // NOI18N
+        jMenuItem5.setText("Salir");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        Archivo.add(jMenuItem5);
 
         jMenuBar1.add(Archivo);
 
@@ -547,70 +615,120 @@ public class Aplicacion extends javax.swing.JFrame {
         agregarSimbolo("REUN");
     }//GEN-LAST:event_ReunionIconMouseClicked
 
+    @Override
+    public Image getIconImage() {
+        Image retValue = Toolkit.getDefaultToolkit().
+                getImage(ClassLoader.getSystemResource("resources/icon.png"));
+        return retValue;
+    }
+
+    //si da click derecho en el jlist historial de consultas mostrar la opcion de crear una nueva consulta
     private void historialConsultasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_historialConsultasMousePressed
         // TODO add your handling code here:
-        if(SwingUtilities.isRightMouseButton(evt)){
-            jPopupMenu1.show(evt.getComponent(),evt.getX(),evt.getY());
+        if (SwingUtilities.isRightMouseButton(evt)) {
+            jPopupMenu1.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_historialConsultasMousePressed
-
+//Crear una nueva consulta desde click derecho en el jlist historial de consultas
     private void ConsultaNuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaNuevaActionPerformed
         // TODO add your handling code here:
         contPestanas++;
-        ListaPestana.add(new NuevaConsulta(contPestanas,this));
-        this.ZonaConsulta.addTab("Consulta "+contPestanas, ListaPestana.get(contPestanas-1));
-        Resultado auxiliar = ListaPestana.get(contPestanas-1).getResultado();
+        ListaPestana.add(new NuevaConsulta(contPestanas, this));
+        //this.ZonaConsulta.addTab("Consulta " + contPestanas, ListaPestana.get(contPestanas - 1));
+        CerrarPestana pestanaClosed = new CerrarPestana(ZonaConsulta, ListaPestana.get(contPestanas-1), "Consulta "+contPestanas, CLOSE_ICON_TAB, contPestanas, ZonaResultado);
+        Resultado auxiliar = ListaPestana.get(contPestanas - 1).getResultado();
         ListaResultado.add(auxiliar);
-        ZonaResultado.addTab(auxiliar.getNombre(),auxiliar);
-        consultas.add("Consulta "+contPestanas);
+        ZonaResultado.addTab(auxiliar.getNombre(), auxiliar);
+        consultas.add("Consulta " + contPestanas);
         historialConsultas.setListData(consultas);
+        ZonaConsulta.setSelectedIndex(contPestanas - 1);
+        ZonaResultado.setSelectedIndex(contPestanas - 1);
     }//GEN-LAST:event_ConsultaNuevaActionPerformed
-
+//Si da click en alguna pestaña de consulta colocar visible el resultado que le corresponde
     private void ZonaConsultaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_ZonaConsultaStateChanged
         // TODO add your handling code here:
-        if(ZonaResultado.getTabCount()==0)return;
-        for(int i=0; i<ListaPestana.size(); i++)
-        {
-          if(ListaPestana.get(i).isVisible())
-            {
+        if (ZonaResultado.getTabCount() == 0) {
+            return;
+        }
+        for (int i = 0; i < ListaPestana.size(); i++) {
+            if (ListaPestana.get(i).isVisible()) {
                 ZonaResultado.setSelectedIndex(i);
                 break;
             }
         }
     }//GEN-LAST:event_ZonaConsultaStateChanged
-
+//Si da click en alguna pestaña de los resultados colocar visible la que consulta que le corresponde
     private void ZonaResultadoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_ZonaResultadoStateChanged
         // TODO add your handling code here:
-        if(ZonaConsulta.getTabCount()==0) return;;
-        for(int i=0; i<ListaResultado.size(); i++){
-            if(ListaResultado.get(i).isVisible()){
+        if (ZonaConsulta.getTabCount() == 0) {
+            return;
+        }
+        for (int i = 0; i < ListaResultado.size(); i++) {
+            if (ListaResultado.get(i).isVisible()) {
                 ZonaConsulta.setSelectedIndex(i);
                 break;
             }
         }
     }//GEN-LAST:event_ZonaResultadoStateChanged
-
+//click en el menu crear una nueva relacion
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        new VentanaRelacion(this);
+        //si quiere agregar una nueva relacion
+        VentanaRelacion objeto = new VentanaRelacion(this);
+        DefaultMutableTreeNode nodos, campo;
+        DefaultTreeCellRenderer render;
+        Table<Integer, Integer, Object> tabla = TreeBasedTable.create();
+        String rel = "";
+        if (objeto.relacionCreada()) {
+            rel = objeto.getNombreRelacion();
+            //reviso si la relacion ya ha sido cargada
+            for (int i = 0; i < raizRelaciones.getChildCount(); i++) {
+                DefaultMutableTreeNode relacion = (DefaultMutableTreeNode) raizRelaciones.getChildAt(i);
+                if (relacion.toString().equalsIgnoreCase(rel)) {
+                    return;
+                }
+            }
+            //Colocar imagen a cada relacion cargada en el árbol
+            render = (DefaultTreeCellRenderer) Carpetas.getCellRenderer();
+            render.setOpenIcon(new ImageIcon("folder.png"));
+            render.setClosedIcon(new ImageIcon("folder.png"));
+            //guardo en un table lo que contiene el archivo
+            tabla = funciones.cargarArchivo(rel);
+            nodos = new DefaultMutableTreeNode(rel);
+            //agrego como nodos hijos de la relacion cada campo
+            for (int i = 0; i < tabla.columnKeySet().size(); i++) {
+                campo = new DefaultMutableTreeNode(tabla.get(0, i));
+                nodos.add(campo);
+                render.setLeafIcon(new ImageIcon("table.png"));
+            }
+            raizRelaciones.add(nodos);
+            modeloRelaciones.setRoot(raizRelaciones);
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
-
+//Click en el menu cargar una relacion existente
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        String nombreRelacion="";
+        //so quiere cargar una relacion
+        String nombreRelacion = "";
         int seleccion = archivo.showOpenDialog(null);
         DefaultMutableTreeNode nodos, campo;
+        DefaultTreeCellRenderer render;
         Table<Integer, Integer, Object> tabla = TreeBasedTable.create();
-        
-        switch(seleccion){
+
+        switch (seleccion) {
             case JFileChooser.CANCEL_OPTION:
                 break;
-            case JFileChooser.APPROVE_OPTION:    
-                nombreRelacion = archivo.getSelectedFile().getName().substring(0,archivo.getSelectedFile().getName().indexOf("."));
+            case JFileChooser.APPROVE_OPTION:
+                nombreRelacion = archivo.getSelectedFile().getName().substring(0, archivo.getSelectedFile().getName().indexOf("."));
                 //reviso si la relacion ya ha sido cargada
                 for (int i = 0; i < raizRelaciones.getChildCount(); i++) {
-                    DefaultMutableTreeNode relacion = (DefaultMutableTreeNode)raizRelaciones.getChildAt(i);
-                    if(relacion.toString().equalsIgnoreCase(nombreRelacion))
-                            return;
+                    DefaultMutableTreeNode relacion = (DefaultMutableTreeNode) raizRelaciones.getChildAt(i);
+                    if (relacion.toString().equalsIgnoreCase(nombreRelacion)) {
+                        return;
+                    }
                 }
+                //Colocar imagen a cada relacion cargada en el árbol
+                render = (DefaultTreeCellRenderer) Carpetas.getCellRenderer();
+                render.setOpenIcon(new ImageIcon("folder.png"));
+                render.setClosedIcon(new ImageIcon("folder.png"));
                 //guardo en un table lo que contiene el archivo
                 tabla = funciones.cargarArchivo(archivo.getSelectedFile());
                 nodos = new DefaultMutableTreeNode(nombreRelacion);
@@ -618,6 +736,7 @@ public class Aplicacion extends javax.swing.JFrame {
                 for (int i = 0; i < tabla.columnKeySet().size(); i++) {
                     campo = new DefaultMutableTreeNode(tabla.get(0, i));
                     nodos.add(campo);
+                    render.setLeafIcon(new ImageIcon("table.png"));
                 }
                 raizRelaciones.add(nodos);
                 modeloRelaciones.setRoot(raizRelaciones);
@@ -626,13 +745,88 @@ public class Aplicacion extends javax.swing.JFrame {
                 break;
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+//si da click en el arbol de las relaciones cargadas
+    private void CarpetasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CarpetasMouseClicked
+        // TODO add your handling code here:
+        if (SwingUtilities.isRightMouseButton(evt)) {
+            int row = Carpetas.getClosestRowForLocation(evt.getX(), evt.getY());
+            boolean seleccion = false;
+            Carpetas.setSelectionRow(row);
+            nombreSeleccionado = Carpetas.getSelectionPath().getLastPathComponent().toString();
 
-    private void agregarSimbolo(String simbolo){
+            //reviso si donde da click es una relacion
+            for (int i = 0; i < raizRelaciones.getChildCount(); i++) {
+                DefaultMutableTreeNode relacion = (DefaultMutableTreeNode) raizRelaciones.getChildAt(i);
+                if (relacion.toString().equals(nombreSeleccionado)) {
+                    seleccionCarpeta = true;
+                    seleccion = true;
+                }
+            }
+            if (seleccion) {
+                jMenuItem3.setText("Ver: " + nombreSeleccionado);
+                jPopupMenu2.show(evt.getComponent(), evt.getX(), evt.getY());
+                seleccion = false;
+            }
+        }
+    }//GEN-LAST:event_CarpetasMouseClicked
+//Hacer click direcho en Ver una relación 
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        if (seleccionCarpeta) {
+            VerRelacion ver = new VerRelacion(this, nombreSeleccionado);
+            ver.SetRelacion(funciones.cargarArchivo(nombreSeleccionado));
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+//Crear una nueva consulta desde el boton NuevaConsulta
+    private void nuevaConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevaConsultaActionPerformed
+        // TODO add your handling code here:
+        contPestanas++;
+        ListaPestana.add(new NuevaConsulta(contPestanas, this));
+        //this.ZonaConsulta.addTab("Consulta " + contPestanas, ListaPestana.get(contPestanas - 1));
+        CerrarPestana pestanaClosed = new CerrarPestana(ZonaConsulta, ListaPestana.get(contPestanas-1), "Consulta "+contPestanas, CLOSE_ICON_TAB, contPestanas, ZonaResultado);
+        Resultado auxiliar = ListaPestana.get(contPestanas - 1).getResultado();
+        ListaResultado.add(auxiliar);
+        ZonaResultado.addTab(auxiliar.getNombre(), auxiliar);
+        consultas.add("Consulta " + contPestanas);
+        historialConsultas.setListData(consultas);
+        ZonaConsulta.setSelectedIndex(contPestanas - 1);
+        ZonaResultado.setSelectedIndex(contPestanas - 1);
+    }//GEN-LAST:event_nuevaConsultaActionPerformed
+//Crear una consulta desde el menu Archivo/nueva consulta
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+        contPestanas++;
+        ListaPestana.add(new NuevaConsulta(contPestanas, this));
+        //this.ZonaConsulta.addTab("Consulta " + contPestanas, ListaPestana.get(contPestanas - 1));
+        CerrarPestana pestanaClosed = new CerrarPestana(ZonaConsulta, ListaPestana.get(contPestanas-1), "Consulta "+contPestanas, CLOSE_ICON_TAB, contPestanas, ZonaResultado);
+        Resultado auxiliar = ListaPestana.get(contPestanas - 1).getResultado();
+        ListaResultado.add(auxiliar);
+        ZonaResultado.addTab(auxiliar.getNombre(), auxiliar);
+        consultas.add("Consulta " + contPestanas);
+        historialConsultas.setListData(consultas);
+        ZonaConsulta.setSelectedIndex(contPestanas - 1);
+        ZonaResultado.setSelectedIndex(contPestanas - 1);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+//Click en el menu Archivo/Salir
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+//doble cick en el nombre de una consulta, mostrar la pestaña q le corresponde
+    private void historialConsultasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_historialConsultasMouseClicked
+        // TODO add your handling code here:
+     if (evt.getClickCount() == 2) {
+            int index = historialConsultas.locationToIndex(evt.getPoint());
+            ZonaConsulta.setSelectedIndex(index);
+            ZonaResultado.setSelectedIndex(index);
+        }
+    }//GEN-LAST:event_historialConsultasMouseClicked
 
-        for(int i=0; i<ListaPestana.size(); i++){
+    private void agregarSimbolo(String simbolo) {
+
+        for (int i = 0; i < ListaPestana.size(); i++) {
             //System.out.println("i: "+ i +" - "+ ListaPestana.get(i).isVisible()  );
-            if(ListaPestana.get(i).isVisible())
-            {
+            if (ListaPestana.get(i).isVisible()) {
                 ListaPestana.get(i).recibirSimbolos(simbolo);
                 break;
             }
@@ -641,34 +835,34 @@ public class Aplicacion extends javax.swing.JFrame {
 
     /**
      *
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
 
 
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-            if ("Nimbus".equals(info.getName())) {
-            javax.swing.UIManager.setLookAndFeel(info.getClassName());
-            break;
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
             }
-            }
-            } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(Aplicacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            } catch (InstantiationException ex) {
+        } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(Aplicacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
+        } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(Aplicacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Aplicacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            }
+        }
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new Aplicacion().setVisible(true);
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu Archivo;
     private javax.swing.JTree Carpetas;
@@ -689,9 +883,13 @@ public class Aplicacion extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -699,6 +897,6 @@ public class Aplicacion extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
+    private javax.swing.JButton nuevaConsulta;
     // End of variables declaration//GEN-END:variables
-
 }

@@ -4,7 +4,6 @@
  */
 package pruebaide;
 
-import interprete.Interprete;
 import interprete.Principal;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -29,12 +28,10 @@ public class NuevaConsulta extends JPanel implements FocusListener {
     private Resultado resultado;
     final private Aplicacion aplicacion;
     private interprete.Principal principal;
-    private interprete.Interprete interprete;
 
     public NuevaConsulta(int pestana, final Aplicacion aplicacion) {
 
         this.aplicacion = aplicacion;
-        interprete = new Interprete(null);
         areaConsulta = new JTextArea();
         nombre = new JLabel("Nombre:");
         nombreConsulta = new JTextField("Consulta 1");
@@ -75,12 +72,11 @@ public class NuevaConsulta extends JPanel implements FocusListener {
         });
 
         ejecutar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-                System.out.println("consulta: "+areaConsulta.getText());
+            public void actionPerformed(ActionEvent e) {               
                 try {
-                    principal = new Principal(areaConsulta.getText());
-                    resultado.SetAreaResultado(principal.getTabla());
+                        principal = new Principal(areaConsulta.getText());
+                        resultado.SetAreaResultado(principal.getTabla());
+                
                 } catch (Exception ex) {
                     Logger.getLogger(NuevaConsulta.class.getName()).log(Level.SEVERE, null, ex);
                 }

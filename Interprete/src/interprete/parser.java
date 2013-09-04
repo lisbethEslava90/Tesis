@@ -293,23 +293,22 @@ SymbolFactory es una nueva caracteristica que ha sido a�adida a las version 11
 , esto debido a que dicha clase no provee mucha informaci�n de contexto que podria ser util para el analisis semantico o ayudar en la construccion del AST
 Mas informacion en: http//4thmouse.com/index.php/2007/02/15/using-custom-symbols-in-cup/
 ***********/
-//	public static void main(String args[]) throws Exception {
+	public static void main(String args[]) throws Exception {
 		//TinySymbolFactory sf = new TinySymbolFactory();
-//		SymbolFactory sf = new DefaultSymbolFactory();
+		SymbolFactory sf = new DefaultSymbolFactory();
 		/*if (args.length==0) 
 			new parser(new Scanner(System.in,sf),sf).parse();
 		else 
 			new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf).parse();
 		*/	
-		
-//		parser parser_obj = new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf);
+		parser parser_obj = new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf);
 
-//		parser_obj.parse();
+		parser_obj.parse();
 		
-//		NodoBase raiz =  parser_obj.action_obj.getRaiz();
-//		Util.imprimirArbol(raiz);
-
-//	}
+		NodoBase raiz =  parser_obj.action_obj.getRaiz();
+		Util.imprimirArbol(raiz); 
+                new Interprete(raiz).inicio();
+	}
 
 
 }

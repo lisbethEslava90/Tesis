@@ -16,13 +16,6 @@ import java_cup.runtime.SymbolFactory;
 		lineanum=0;
 		debug=true;
 	}
-	
-	public Scanner(String consulta, SymbolFactory sf){
-		this(new java.io.StringReader(consulta));
-		this.sf=sf;
-		lineanum=0;
-		debug=true;
-	}
 
 %}
 %eofval{

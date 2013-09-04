@@ -73,6 +73,7 @@ public class Funciones {
                 }
             }
         }
+        //comparo si la cantidad de elementos del predicado se encuentran todos en la relacion
         if(dominio == elementoLista){
         //for para recorrer la lista
             for(int i=0; i<elementoLista; i++){
@@ -122,7 +123,7 @@ public class Funciones {
                 return nuevaRelacion;
 
         }else
-            System.out.println("Dominios incompatibles");
+            System.out.println("No exiten todos los campoos específicados");
         return auxiliar;
     }
 

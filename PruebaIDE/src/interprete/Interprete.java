@@ -25,26 +25,11 @@ public class Interprete {
         
         while (nodoActual != null){
 
-            if(nodoActual instanceof NodoComparacion){
-                System.out.println("NodoComparacion");
-                //imprimirNodo( (NodoComparacion) raiz);
-            }else if(nodoActual instanceof NodoExpresion){
-                System.out.println("NodoExpresion");
+            if(nodoActual instanceof NodoExpresion){
                 nodoExpresion((NodoExpresion)nodoActual);
-            }else if(nodoActual instanceof NodoFecha){
-                System.out.println("NodoFecha");
-            }else if(nodoActual instanceof NodoId){
-                System.out.println("NodoId");
-            }else if(nodoActual instanceof  NodoNumero){
-                System.out.println("NodoNumero");
-
             }else if(nodoActual instanceof NodoOperacion){
-                System.out.println("NodoOperacion");
                 nodoOperacion((NodoOperacion)nodoActual);
-            }else if(nodoActual instanceof NodoOperadorLogico){
-                System.out.println("NodoOperadorLogico");
-            }else System.out.println("Nodo Desconocido");
-
+            }
             nodoActual = nodoActual.getHermanoDerecha();
         }
     }
@@ -54,7 +39,6 @@ public class Interprete {
         if(nodoExpresion.getTIPO_EXP().equals("SEL")){
             Table<Integer, Integer, String> relacion = TreeBasedTable.create();
             Table<Integer, Integer, String> resultado = TreeBasedTable.create();
-            System.out.println("SEL");
 
             if(nodoExpresion.getRelacion() instanceof NodoId){
                 pila.add(funcion.cargarArchivo(((NodoId) nodoExpresion.getRelacion()).getId()));
@@ -64,25 +48,15 @@ public class Interprete {
             relacion.putAll((Table<Integer, Integer, String>)pila.pop());
             resultado = funcion.OperacionSeleccion(nodoExpresion.getPredicado(),relacion);
             setFin(resultado);
-            pila.add(resultado);
-
-            ImprimirTabla(resultado);
-            
+            pila.add(resultado);       
         }
         else if(nodoExpresion.getTIPO_EXP().equals("PRO")){
             Table<Integer, Integer, String> relacion = TreeBasedTable.create();
             Table<Integer, Integer, String> resultado = TreeBasedTable.create();
-            System.out.println("PRO");
-
             ArrayList<String> listaPredicado = new ArrayList<String>();
             ArrayList<NodoBase> listaPredicadoAuxiliar = new ArrayList<NodoBase>();
             NodoBase predicado = nodoExpresion.getPredicado();
 
-//            while(predicado!=null){
-//                System.out.println("predicado: "+((NodoId)predicado).getId());
-//                listaPredicado.add(((NodoId)predicado).getId());
-//                predicado = predicado.getHermanoDerecha();
-//            }
             while(predicado!=null){
                 if(predicado instanceof NodoId){
                     listaPredicado.add(((NodoId)predicado).getId());
@@ -93,8 +67,6 @@ public class Interprete {
                 }
                 predicado = predicado.getHermanoDerecha();
             }
-            System.out.println("lista: "+listaPredicado);
-            System.out.println("listaAuxiliar: "+listaPredicadoAuxiliar);
 
             if(nodoExpresion.getRelacion() instanceof NodoId){
                 pila.add(funcion.cargarArchivo(((NodoId)nodoExpresion.getRelacion()).getId()));
@@ -111,8 +83,6 @@ public class Interprete {
                 setFin(resultado);
                 pila.add(resultado);
             }
-            System.out.println("FIN DESDE INTERPRETE: "+fin);
-            ImprimirTabla(resultado);
         }
     }
 
@@ -124,9 +94,7 @@ public class Interprete {
         Table<Integer, Integer, String> relacionD = TreeBasedTable.create();
         Table<Integer, Integer, String> resultado = TreeBasedTable.create();
         
-
            if(sel.equals("UNI")){
-                System.out.println("UNI");
                 if(nodoOperacion.getOpIzq() instanceof NodoId){
                     pila.add(funcion.cargarArchivo(((NodoId)nodoOperacion.getOpIzq()).getId()));
                 }else{
@@ -143,10 +111,8 @@ public class Interprete {
                 resultado.putAll(funcion.union(relacionI, relacionD));
                 pila.add(resultado);
                 setFin(resultado);
-                ImprimirTabla(resultado);
            }
            if(sel.equals("INT")){
-                System.out.println("INT");
                 if(nodoOperacion.getOpIzq() instanceof NodoId){
                     pila.add(funcion.cargarArchivo(((NodoId)nodoOperacion.getOpIzq()).getId()));
                 }else{
@@ -163,10 +129,8 @@ public class Interprete {
                 resultado.putAll(funcion.interseccion(relacionI, relacionD));
                 pila.add(resultado);
                 setFin(resultado);
-                ImprimirTabla(resultado);
            }
            if(sel.equals("PROC")){
-                System.out.println("PROC");
                 if(nodoOperacion.getOpIzq() instanceof NodoId){
                     nombreI = ((NodoId)nodoOperacion.getOpIzq()).getId();
                     pila.add(funcion.cargarArchivo(nombreI));
@@ -185,10 +149,8 @@ public class Interprete {
                 resultado.putAll(funcion.productoCartesiano(relacionI, relacionD));
                 pila.add(resultado);
                 setFin(resultado);
-                ImprimirTabla(resultado);
            }
            if(sel.equals("DIV")){
-                System.out.println("DIV");
                 if(nodoOperacion.getOpIzq() instanceof NodoId){
                     pila.add(funcion.cargarArchivo(((NodoId)nodoOperacion.getOpIzq()).getId()));
                 }else{
@@ -205,10 +167,8 @@ public class Interprete {
                 resultado.putAll(funcion.division(relacionI, relacionD));
                 pila.add(resultado);
                 setFin(resultado);
-                ImprimirTabla(resultado);
            }
            if(sel.equals("DIF")){
-                System.out.println("DIF");
                 if(nodoOperacion.getOpIzq() instanceof NodoId){
                     pila.add(funcion.cargarArchivo(((NodoId)nodoOperacion.getOpIzq()).getId()));
                 }else{
@@ -225,10 +185,8 @@ public class Interprete {
                 resultado.putAll(funcion.diferencia(relacionI, relacionD));
                 pila.add(resultado);
                 setFin(resultado);
-                ImprimirTabla(resultado);
            }
            if(sel.equals("REUN")){
-                System.out.println("REUN");
                 if(nodoOperacion.getOpIzq() instanceof NodoId){
                     pila.add(funcion.cargarArchivo(((NodoId)nodoOperacion.getOpIzq()).getId()));
                 }else{
@@ -245,7 +203,6 @@ public class Interprete {
                 resultado.putAll(funcion.reunionNatural(relacionI, relacionD));
                 pila.add(resultado);
                 setFin(resultado);
-                ImprimirTabla(resultado);
            }
     }
 
@@ -261,5 +218,4 @@ public class Interprete {
     public void setFin(Table tabla){
         this.fin = tabla;
     }
-
 }
